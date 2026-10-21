@@ -16,7 +16,30 @@ class AnalysisRequest(BaseModel):
 
 
 class LoudnessMetrics(BaseModel):
-    """Placeholder for loudness measurements (fields defined in Step 1)."""
+    """ITU-R BS.1770-4 loudness and peak measurements for one audio file.
+
+    Loudness values are expressed in LUFS, peak values in dBFS/dBTP, loudness
+    range in LU, and the crest factor in dB. ``duration_s`` is the analyzed
+    file duration in seconds.
+    """
+
+    integrated_lufs: float
+    short_term_max_lufs: float
+    momentary_max_lufs: float
+    loudness_range_lu: float
+    true_peak_dbtp: float
+    sample_peak_dbfs: float
+    crest_factor_db: float
+    duration_s: float
+
+
+class SegmentLoudness(BaseModel):
+    """Loudness and true peak measured over a fixed analysis window."""
+
+    start_s: float
+    end_s: float
+    lufs: float
+    true_peak_dbtp: float
 
 
 class Suggestion(BaseModel):
