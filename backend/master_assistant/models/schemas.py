@@ -99,3 +99,64 @@ class SpectralComparison(BaseModel):
     bands: list[BandDelta]
     tilt_delta_db_per_octave: float
     top_problems: list[BandDelta]
+
+
+class StereoBandMetrics(BaseModel):
+    """Stereo descriptors measured in one third-octave band.
+
+    ``correlation`` is the goniometer ratio ``(M² - S²) / (M² + S²)`` in the
+    ``[-1, 1]`` range: 1.0 for fully mono content, 0.0 for uncorrelated content
+    and -1.0 for fully out-of-phase content. ``side_to_mid_db`` is the side
+    power relative to the mid power in dB.
+    """
+
+    name: str
+    freq_hz: float
+    correlation: float
+    side_to_mid_db: float
+
+
+class StereoMetrics(BaseModel):
+    """Stereo width, correlation, and mid/side balance for one audio file.
+
+    ``width_hz`` is the frequency below which the signal is essentially mono,
+    that is the highest band center for which the side stays more than 20 dB
+    under the mid.
+    """
+
+    bands: list[StereoBandMetrics]
+    overall_correlation: float
+    overall_side_to_mid_db: float
+    width_hz: float
+
+
+class StereoBandDelta(BaseModel):
+    """Difference between the user and reference stereo metrics in one band.
+
+    Deltas are ``user - reference``. ``severity`` classifies the magnitude of
+    ``correlation_delta`` as ``ok``, ``minor``, or ``major``.
+    """
+
+    name: str
+    freq_hz: float
+    user_correlation: float
+    reference_correlation: float
+    correlation_delta: float
+    user_side_to_mid_db: float
+    reference_side_to_mid_db: float
+    side_to_mid_delta_db: float
+    severity: Literal["ok", "minor", "major"]
+
+
+class StereoComparison(BaseModel):
+    """Per-band comparison of a user stereo image against a reference master.
+
+    ``top_problems`` holds up to three bands whose severity is not ``ok``,
+    ordered by descending absolute correlation difference.
+    """
+
+    bands: list[StereoBandDelta]
+    overall_correlation_delta: float
+    overall_side_to_mid_delta_db: float
+    width_hz_delta: float
+    top_problems: list[StereoBandDelta]

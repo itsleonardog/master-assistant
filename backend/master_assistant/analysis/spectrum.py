@@ -13,8 +13,19 @@ from typing import Literal
 
 import numpy as np
 import soundfile
-from scipy.signal import welch
 
+# The Welch estimator, ISO band center table, band naming and band bin
+# selection were extracted into the internal ``_bands`` module so that
+# ``stereo.py`` can reuse them. Importing the underscore-prefixed helpers from
+# this module instead would have coupled stereo analysis to another module's
+# private API, so the shared module is the cleaner of the two options; public
+# behavior here is unchanged.
+from master_assistant.analysis._bands import (
+    BAND_CENTERS_HZ,
+    band_energy_db,
+    band_name,
+    welch_psd,
+)
 from master_assistant.analysis.errors import AudioReadError
 from master_assistant.models.schemas import (
     BandDelta,
@@ -23,14 +34,6 @@ from master_assistant.models.schemas import (
     SpectralMetrics,
 )
 
-# Welch parameters. 8192 samples at 48 kHz gives ~5.9 Hz resolution, fine
-# enough to resolve the lowest third-octave band while keeping enough segments
-# for a stable estimate on a 5 s clip.
-_NPERSEG = 8192
-_OVERLAP_NUMERATOR = 3
-_OVERLAP_DENOMINATOR = 4
-# Floor used when a band has no measurable energy (silence or out-of-range).
-_SILENCE_DB = -120.0
 _FLATNESS_EPS = 1e-12
 _TILT_MIN_HZ = 100.0
 _TILT_MAX_HZ = 10_000.0
@@ -38,42 +41,6 @@ _ROLLOFF_FRACTION = 0.85
 _MINOR_DB = 1.5
 _MAJOR_DB = 3.0
 _TOP_PROBLEM_COUNT = 3
-_BAND_EDGE_RATIO = 2.0 ** (1.0 / 6.0)
-
-# ISO 266 third-octave band centers in Hz.
-_BAND_CENTERS_HZ: tuple[float, ...] = (
-    20.0,
-    25.0,
-    31.5,
-    40.0,
-    50.0,
-    63.0,
-    80.0,
-    100.0,
-    125.0,
-    160.0,
-    200.0,
-    250.0,
-    315.0,
-    400.0,
-    500.0,
-    630.0,
-    800.0,
-    1000.0,
-    1250.0,
-    1600.0,
-    2000.0,
-    2500.0,
-    3150.0,
-    4000.0,
-    5000.0,
-    6300.0,
-    8000.0,
-    10000.0,
-    12500.0,
-    16000.0,
-    20000.0,
-)
 
 
 def analyze_spectrum(path: Path) -> SpectralMetrics:
@@ -94,15 +61,15 @@ def analyze_spectrum(path: Path) -> SpectralMetrics:
         AudioReadError: If the file cannot be opened or decoded.
     """
     mono, sample_rate = _read_mono(path)
-    freqs, psd = _welch_psd(mono, sample_rate)
+    freqs, psd = welch_psd(mono, sample_rate)
 
     bands = [
         SpectralBand(
-            name=_band_name(center_hz),
+            name=band_name(center_hz),
             freq_hz=center_hz,
-            energy_db=_band_energy_db(freqs, psd, center_hz),
+            energy_db=band_energy_db(freqs, psd, center_hz),
         )
-        for center_hz in _BAND_CENTERS_HZ
+        for center_hz in BAND_CENTERS_HZ
     ]
 
     return SpectralMetrics(
@@ -195,75 +162,6 @@ def _read_mono(path: Path) -> tuple[np.ndarray, int]:
 
     mono = np.mean(data, axis=1, dtype=np.float64)
     return mono, int(sample_rate)
-
-
-def _welch_psd(mono: np.ndarray, sample_rate: int) -> tuple[np.ndarray, np.ndarray]:
-    """Estimate the one-sided power spectral density with Welch's method.
-
-    Args:
-        mono: One-dimensional mono audio signal.
-        sample_rate: Sample rate in Hz.
-
-    Returns:
-        A tuple of frequency bins in Hz and the PSD in units of power per Hz.
-    """
-    freqs, psd = welch(
-        mono,
-        fs=sample_rate,
-        window="hann",
-        nperseg=_NPERSEG,
-        noverlap=_NPERSEG * _OVERLAP_NUMERATOR // _OVERLAP_DENOMINATOR,
-        scaling="density",
-        detrend=False,
-        return_onesided=True,
-    )
-    return freqs, psd
-
-
-def _band_name(center_hz: float) -> str:
-    """Format a band center frequency as a stable, human-readable name.
-
-    Args:
-        center_hz: Band center frequency in Hz.
-
-    Returns:
-        A name such as ``"1kHz"`` for integer kilohertz or ``"31.5Hz"``.
-    """
-    if center_hz >= 1000.0 and center_hz % 1000.0 == 0.0:
-        return f"{center_hz / 1000.0:g}kHz"
-    return f"{center_hz:g}Hz"
-
-
-def _band_energy_db(freqs: np.ndarray, psd: np.ndarray, center_hz: float) -> float:
-    """Integrate the PSD over one third-octave band and convert it to dB.
-
-    The band spans ``center / 2**(1/6)`` to ``center * 2**(1/6)``. Because the
-    PSD is already a density, the mean of the bins inside the interval is used
-    as the band energy. Bands entirely above the Nyquist frequency, bands with
-    no bins, and silent bands return ``-120.0``.
-
-    Args:
-        freqs: Frequency bins in Hz.
-        psd: Power spectral density aligned with ``freqs``.
-        center_hz: Band center frequency in Hz.
-
-    Returns:
-        Mean band power in dB, or ``-120.0`` when the band is unmeasurable.
-    """
-    f_lo = center_hz / _BAND_EDGE_RATIO
-    f_hi = center_hz * _BAND_EDGE_RATIO
-    if f_lo >= freqs[-1]:
-        return _SILENCE_DB
-
-    mask = (freqs >= f_lo) & (freqs < f_hi)
-    if not np.any(mask):
-        return _SILENCE_DB
-
-    mean_power = float(np.mean(psd[mask]))
-    if not np.isfinite(mean_power) or mean_power <= 0.0:
-        return _SILENCE_DB
-
-    return float(10.0 * np.log10(mean_power))
 
 
 def _spectral_tilt(bands: list[SpectralBand]) -> float:
