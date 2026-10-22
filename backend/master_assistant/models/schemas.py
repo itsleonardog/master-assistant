@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -44,3 +46,56 @@ class SegmentLoudness(BaseModel):
 
 class Suggestion(BaseModel):
     """Placeholder for a single mastering suggestion (fields defined in Step 1)."""
+
+
+class SpectralBand(BaseModel):
+    """Energy measured in one third-octave band.
+
+    ``freq_hz`` is the ISO band center frequency and ``energy_db`` is the mean
+    power spectral density inside the band expressed in dB.
+    """
+
+    name: str
+    freq_hz: float
+    energy_db: float
+
+
+class SpectralMetrics(BaseModel):
+    """Spectral balance and timbre descriptors for one audio file.
+
+    Band energies are in dB, the tilt is in dB per octave, centroid and rolloff
+    are in Hz, and flatness is a dimensionless ratio between 0 and 1.
+    """
+
+    bands: list[SpectralBand]
+    tilt_db_per_octave: float
+    spectral_centroid_hz: float
+    rolloff_85_hz: float
+    flatness: float
+
+
+class BandDelta(BaseModel):
+    """Difference between the user band energy and the reference band energy.
+
+    ``delta_db`` is ``user_db - reference_db`` and ``severity`` classifies its
+    magnitude as ``ok``, ``minor``, or ``major``.
+    """
+
+    name: str
+    freq_hz: float
+    user_db: float
+    reference_db: float
+    delta_db: float
+    severity: Literal["ok", "minor", "major"]
+
+
+class SpectralComparison(BaseModel):
+    """Per-band comparison of a user track against a reference master.
+
+    ``top_problems`` holds up to three bands whose severity is not ``ok``,
+    ordered by descending absolute difference.
+    """
+
+    bands: list[BandDelta]
+    tilt_delta_db_per_octave: float
+    top_problems: list[BandDelta]
