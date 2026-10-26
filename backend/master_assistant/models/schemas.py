@@ -160,3 +160,36 @@ class StereoComparison(BaseModel):
     overall_side_to_mid_delta_db: float
     width_hz_delta: float
     top_problems: list[StereoBandDelta]
+
+
+class LoudnessDelta(BaseModel):
+    """Difference between user and reference for every loudness metric.
+
+    Every field is ``user - reference``. ``duration_s`` is intentionally absent
+    because the two files may have different durations, which makes a delta
+    meaningless for it.
+    """
+
+    integrated_lufs_delta: float
+    short_term_max_lufs_delta: float
+    momentary_max_lufs_delta: float
+    loudness_range_lu_delta: float
+    true_peak_dbtp_delta: float
+    sample_peak_dbfs_delta: float
+    crest_factor_db_delta: float
+
+
+class ComparisonReport(BaseModel):
+    """Combined user versus reference report ready for the rule engine.
+
+    ``stereo`` is ``None`` when either file is mono, because mid/side metrics
+    are only defined for a stereo pair. ``warnings`` collects non-fatal caveats
+    such as a skipped stereo comparison or very different file durations.
+    """
+
+    user_loudness: LoudnessMetrics
+    reference_loudness: LoudnessMetrics
+    loudness_delta: LoudnessDelta
+    spectrum: SpectralComparison
+    stereo: StereoComparison | None
+    warnings: list[str]
