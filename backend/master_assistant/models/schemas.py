@@ -222,3 +222,18 @@ class ComparisonReport(BaseModel):
     spectrum: SpectralComparison
     stereo: StereoComparison | None
     warnings: list[str]
+
+
+class AnalysisResponse(BaseModel):
+    """Response of ``POST /analyze``: report, suggestions, and DAW-ready texts.
+
+    ``suggestions`` stays DAW-agnostic and carries the structured action
+    payloads, while ``rendered_suggestions`` holds the same advice already
+    formatted for ``daw`` and in the same order. ``daw`` echoes the requested
+    adapter so clients can confirm which renderer produced the texts.
+    """
+
+    report: ComparisonReport
+    suggestions: list[Suggestion]
+    rendered_suggestions: list[str]
+    daw: str

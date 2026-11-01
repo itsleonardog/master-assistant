@@ -16,6 +16,8 @@ classifiers = [
 ]
 dependencies = [
     "fastapi>=0.110",
+    # Required by FastAPI to parse multipart/form-data uploads in POST /analyze.
+    "python-multipart>=0.0.9",
     "uvicorn[standard]>=0.29",
     "librosa>=0.10.1",
     "pyloudnorm>=0.1.1",
