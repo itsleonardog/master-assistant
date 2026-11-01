@@ -12,7 +12,7 @@ from pathlib import Path
 
 from master_assistant.analysis.loudness import analyze_loudness
 from master_assistant.analysis.spectrum import compare_spectra
-from master_assistant.analysis.stereo import compare_stereo
+from master_assistant.analysis.stereo import MonoInputError, compare_stereo
 from master_assistant.models.schemas import (
     ComparisonReport,
     LoudnessDelta,
@@ -61,11 +61,12 @@ def analyze_pair(user_path: Path, reference_path: Path) -> ComparisonReport:
     warnings: list[str] = []
     try:
         stereo = compare_stereo(user_path, reference_path)
-    except ValueError as exc:
-        # Mono input is the only documented ValueError of compare_stereo; it is
-        # not an analysis failure, so the report is still useful without stereo.
+    except MonoInputError:
+        # Mono input is not an analysis failure, so the report is still useful
+        # without stereo. The message stays generic on purpose: the exception
+        # text embeds the server-side path, which must not reach the client.
         stereo = None
-        warnings.append(f"Stereo comparison skipped: {exc}")
+        warnings.append("Stereo comparison skipped: mono input")
 
     duration_warning = _duration_warning(
         user_loudness.duration_s,

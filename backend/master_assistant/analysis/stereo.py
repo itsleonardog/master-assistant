@@ -29,6 +29,10 @@ from master_assistant.models.schemas import (
     StereoMetrics,
 )
 
+
+class MonoInputError(ValueError):
+    """Raised when a file has fewer than two channels for stereo analysis."""
+
 # Side-to-mid ratio (in dB) below which a band is considered effectively mono.
 # -20 dB means the side carries under 1% of the mid energy, which is where a
 # widening plugin or a listener stops perceiving any width. This is a heuristic
@@ -72,7 +76,7 @@ def analyze_stereo(path: Path) -> StereoMetrics:
         effectively mono.
 
     Raises:
-        ValueError: If the file has fewer than two channels.
+        MonoInputError: If the file has fewer than two channels.
         AudioReadError: If the file cannot be opened or decoded.
     """
     data, sample_rate = _read_stereo(path)
@@ -128,7 +132,7 @@ def compare_stereo(user_path: Path, reference_path: Path) -> StereoComparison:
         deviations ordered by absolute correlation delta.
 
     Raises:
-        ValueError: If either file has fewer than two channels.
+        MonoInputError: If either file has fewer than two channels.
         AudioReadError: If either file cannot be opened or decoded.
     """
     user = analyze_stereo(user_path)
@@ -188,7 +192,7 @@ def _read_stereo(path: Path) -> tuple[np.ndarray, int]:
     Raises:
         AudioReadError: If the file is missing, corrupt, empty, or has an
             invalid sample rate.
-        ValueError: If the file has fewer than two channels.
+        MonoInputError: If the file has fewer than two channels.
     """
     try:
         data, sample_rate = soundfile.read(path, dtype="float64", always_2d=True)
@@ -199,7 +203,7 @@ def _read_stereo(path: Path) -> tuple[np.ndarray, int]:
         raise AudioReadError(f"Audio file '{path}' contains no decodable samples")
 
     if data.shape[1] < 2:
-        raise ValueError(
+        raise MonoInputError(
             "Stereo analysis requires at least 2 channels; "
             f"got mono ({data.shape[1]} channel) in '{path}'"
         )

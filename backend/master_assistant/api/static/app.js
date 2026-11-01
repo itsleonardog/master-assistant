@@ -373,7 +373,12 @@
         try {
           var errorPayload = await response.json();
           if (errorPayload && errorPayload.detail) {
-            detail = errorPayload.detail;
+            if (Array.isArray(errorPayload.detail)) {
+              // FastAPI validation errors: 422
+              detail = "Compila tutti i campi richiesti.";
+            } else {
+              detail = errorPayload.detail;
+            }
           }
         } catch (parseError) {
           detail = "Errore sconosciuto";

@@ -95,6 +95,21 @@ def test_mono_user_skips_stereo_with_warning(tmp_path: Path) -> None:
     )
 
 
+def test_mono_user_warning_does_not_leak_server_path(tmp_path: Path) -> None:
+    """Il warning per mono non deve contenere path del filesystem."""
+    user_path = tmp_path / "user.wav"
+    reference_path = tmp_path / "reference.wav"
+    _write_wav(user_path, _mono_noise(duration_s=5.0, seed=3))
+    _write_wav(reference_path, _stereo_noise(duration_s=5.0, seed=4))
+
+    report = analyze_pair(user_path, reference_path)
+
+    assert report.stereo is None
+    assert "mono input" in report.warnings[0].lower()
+    assert "/" not in report.warnings[0]
+    assert "tmp" not in report.warnings[0].lower()
+
+
 def test_both_mono_files_skip_stereo_with_warning(tmp_path: Path) -> None:
     """Two mono files must also skip stereo analysis and warn about it."""
     user_path = tmp_path / "user.wav"
