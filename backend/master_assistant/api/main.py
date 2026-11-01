@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Annotated
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from master_assistant.analysis.comparison import analyze_pair
 from master_assistant.analysis.errors import AudioReadError
@@ -26,6 +28,7 @@ MAX_FILE_SIZE_MB = 200
 SUPPORTED_DAWS = ("ableton",)
 _UPLOAD_CHUNK_SIZE_BYTES = 1024 * 1024
 _TEMP_SUFFIX = ".wav"
+_STATIC_DIR = Path(__file__).parent / "static"
 
 app = FastAPI(title="Master Assistant", version="0.1.0")
 
@@ -145,3 +148,15 @@ async def _save_upload_to_temp(upload: UploadFile, suffix: str) -> Path:
         path.unlink(missing_ok=True)
         raise
     return path
+
+
+# The static mount and the root redirect are registered last on purpose: FastAPI
+# matches routes in registration order, so a mount declared here cannot shadow
+# ``/health``, ``/analyze``, or the generated ``/docs`` endpoints.
+app.mount("/app", StaticFiles(directory=_STATIC_DIR, html=True), name="app")
+
+
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    """Redirect to the UI."""
+    return RedirectResponse(url="/app/")

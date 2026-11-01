@@ -1,0 +1,245 @@
+/* Minimal, self-contained stylesheet for the Master Assistant UI. */
+
+:root {
+  --color-text: #1b1b1f;
+  --color-muted: #5c5c66;
+  --color-border: #d9d9e0;
+  --color-surface: #ffffff;
+  --color-page: #f6f6f8;
+  --color-critical: #c00;
+  --color-major: #e07b00;
+  --color-minor: #b8a000;
+  --color-info: #888;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 960px;
+  padding: 24px;
+  background: var(--color-page);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 1.75rem;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 1.125rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.forms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 320px;
+  max-width: 500px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+input[type="file"],
+select {
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-surface);
+  font: inherit;
+}
+
+button {
+  align-self: flex-start;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background: #1b1b1f;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+#status:not(:empty) {
+  margin-bottom: 16px;
+}
+
+#results section {
+  margin-bottom: 32px;
+}
+
+#results h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  font-size: 0.9375rem;
+}
+
+th,
+td {
+  border: 1px solid var(--color-border);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+th {
+  background: #eeeef2;
+  font-weight: 600;
+}
+
+td.numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+.delta-bad {
+  color: var(--color-critical);
+  font-weight: 600;
+}
+
+.suggestions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.suggestion {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.suggestion-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.suggestion-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.suggestion-explanation {
+  margin: 4px 0 8px;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.badge.critical {
+  background: var(--color-critical);
+}
+
+.badge.major {
+  background: var(--color-major);
+}
+
+.badge.minor {
+  background: var(--color-minor);
+}
+
+.badge.info {
+  background: var(--color-info);
+}
+
+code {
+  display: block;
+  padding: 8px;
+  border-radius: 4px;
+  background: #f3f3f3;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.warnings {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.error {
+  color: var(--color-critical);
+}

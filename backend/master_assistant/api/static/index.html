@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Master Assistant</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Master Assistant</h1>
+      <p class="subtitle">
+        Confronta la tua traccia con un riferimento e ottieni suggerimenti di mastering
+        pronti per il tuo DAW.
+      </p>
+    </header>
+
+    <main>
+      <div class="forms">
+        <form id="analyze-form" class="panel" novalidate>
+          <h2>Analisi</h2>
+          <label for="user_file">La tua traccia</label>
+          <input id="user_file" name="user_file" type="file" accept="audio/*,.wav,.flac,.aiff" />
+          <label for="daw">DAW</label>
+          <select id="daw" name="daw">
+            <option value="ableton">Ableton Live</option>
+          </select>
+          <button id="submit-button" type="submit">Analizza</button>
+        </form>
+
+        <form id="reference-form" class="panel" novalidate>
+          <h2>Reference</h2>
+          <label for="reference_file">Reference</label>
+          <input
+            id="reference_file"
+            name="reference_file"
+            type="file"
+            accept="audio/*,.wav,.flac,.aiff"
+          />
+          <p class="hint">
+            Il reference viene usato solo come termine di paragone: nessun file viene salvato.
+          </p>
+        </form>
+      </div>
+
+      <div id="status" role="status" aria-live="polite"></div>
+
+      <div id="results"></div>
+    </main>
+
+    <footer>
+      I file vengono elaborati in memoria e cancellati subito.
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
