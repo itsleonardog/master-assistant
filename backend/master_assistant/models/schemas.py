@@ -45,7 +45,36 @@ class SegmentLoudness(BaseModel):
 
 
 class Suggestion(BaseModel):
-    """Placeholder for a single mastering suggestion (fields defined in Step 1)."""
+    """An actionable, DAW-agnostic mastering suggestion.
+
+    ``priority`` orders application (1 = do this first) and is independent from
+    ``severity``, which describes how bad the underlying measurement is.
+    ``action_type`` plus ``action_params`` carry a polymorphic payload that a DAW
+    adapter translates into a concrete instruction, so the rule engine never
+    needs to know which DAW the user runs. ``measured`` and ``target`` keep the
+    numbers behind the advice so it stays auditable.
+    """
+
+    id: str
+    priority: int
+    severity: Literal["info", "minor", "major", "critical"]
+    category: Literal["loudness", "eq", "dynamics", "stereo", "peak"]
+    title: str
+    explanation: str
+    action_type: Literal[
+        "eq_cut",
+        "eq_boost",
+        "compressor",
+        "limiter",
+        "stereo_narrow",
+        "stereo_widen",
+        "gain",
+        "deesser",
+        "saturation",
+    ]
+    action_params: dict[str, float]
+    measured: dict[str, float]
+    target: dict[str, float]
 
 
 class SpectralBand(BaseModel):
