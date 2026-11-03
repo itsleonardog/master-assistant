@@ -16,35 +16,42 @@
     </header>
 
     <main>
-      <div class="forms">
-        <form id="analyze-form" class="panel" novalidate>
-          <h2>Analisi</h2>
-          <label for="user_file">La tua traccia</label>
-          <input id="user_file" name="user_file" type="file" accept="audio/*,.wav,.flac,.aiff" />
+      <form id="analyze-form" novalidate>
+        <div
+          id="dropzone"
+          role="button"
+          tabindex="0"
+          aria-label="Trascina qui i tuoi file audio oppure clicca per selezionarli"
+        >
+          <p class="dropzone-title">Trascina qui i tuoi file audio</p>
+          <p class="dropzone-sub">oppure clicca per selezionare</p>
+          <p class="dropzone-hint">
+            1 file &rarr; la tua traccia &middot; 2 file &rarr; la tua traccia + reference
+          </p>
+          <input
+            id="file-input"
+            type="file"
+            accept="audio/*,.wav,.flac,.aiff"
+            multiple
+            hidden
+          />
+        </div>
+
+        <div id="preview" class="hidden">
+          <div class="preview-card" id="preview-user"></div>
+          <div class="preview-card" id="preview-reference"></div>
+        </div>
+
+        <div class="controls">
           <label for="daw">DAW</label>
           <select id="daw" name="daw">
             <option value="ableton">Ableton Live</option>
           </select>
-          <button id="submit-button" type="submit">Analizza</button>
-        </form>
-
-        <form id="reference-form" class="panel" novalidate>
-          <h2>Reference</h2>
-          <label for="reference_file">Reference</label>
-          <input
-            id="reference_file"
-            name="reference_file"
-            type="file"
-            accept="audio/*,.wav,.flac,.aiff"
-          />
-          <p class="hint">
-            Il reference viene usato solo come termine di paragone: nessun file viene salvato.
-          </p>
-        </form>
-      </div>
+          <button id="submit-button" type="submit" disabled>Analizza</button>
+        </div>
+      </form>
 
       <div id="status" role="status" aria-live="polite"></div>
-
       <div id="results"></div>
     </main>
 
@@ -52,6 +59,18 @@
       I file vengono elaborati in memoria e cancellati subito.
     </footer>
 
+    <template id="guide-template">
+      <div class="guide-box">
+        <h3>Come procedere</h3>
+        <ol>
+          <li>Applica i suggerimenti in ordine di priorità (P1 &rarr; P5).</li>
+          <li>Dopo ogni modifica, ricarica la traccia per verificare il delta.</li>
+          <li>Ripeti finché i suggerimenti si riducono a zero.</li>
+        </ol>
+      </div>
+    </template>
+
     <script src="app.js"></script>
+    <!-- testato manualmente il: 2026-11-03 -->
   </body>
 </html>

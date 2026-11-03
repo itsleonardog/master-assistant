@@ -39,6 +39,15 @@ def test_index_is_served_as_html(client: TestClient) -> None:
     assert "Master Assistant" in response.text
 
 
+def test_index_contains_upload_ui_markers(client: TestClient) -> None:
+    """The served page must include the dropzone, preview, and guide hooks."""
+    response = client.get("/app/")
+
+    assert response.status_code == 200
+    for marker in ("dropzone", "preview", "guide"):
+        assert marker in response.text
+
+
 def test_app_js_is_served(client: TestClient) -> None:
     """GET /app/app.js must return the controller script."""
     response = client.get("/app/app.js")
