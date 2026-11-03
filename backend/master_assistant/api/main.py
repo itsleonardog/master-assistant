@@ -10,11 +10,11 @@ renders the result through the requested :class:`DawAdapter`.
 from __future__ import annotations
 
 import tempfile
+import warnings
 from pathlib import Path
 from typing import Annotated
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from master_assistant.analysis.comparison import analyze_pair
@@ -150,13 +150,30 @@ async def _save_upload_to_temp(upload: UploadFile, suffix: str) -> Path:
     return path
 
 
-# The static mount and the root redirect are registered last on purpose: FastAPI
-# matches routes in registration order, so a mount declared here cannot shadow
-# ``/health``, ``/analyze``, or the generated ``/docs`` endpoints.
-app.mount("/app", StaticFiles(directory=_STATIC_DIR, html=True), name="app")
+@app.api_route(
+    "/analyze",
+    methods=["GET", "HEAD", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    include_in_schema=False,
+)
+def analyze_method_not_allowed() -> None:
+    """Return 405 for non-POST methods on /analyze.
+
+    Declared explicitly so the catch-all static mount at "/" cannot shadow
+    the method mismatch and turn it into a 404.
+    """
+    raise HTTPException(status_code=405, detail="Method Not Allowed")
 
 
-@app.get("/", include_in_schema=False)
-def root() -> RedirectResponse:
-    """Redirect to the UI."""
-    return RedirectResponse(url="/app/")
+# The catch-all static mount is registered last on purpose: FastAPI matches
+# routes in registration order, so a mount declared here cannot shadow
+# ``/health``, ``/analyze``, or the generated ``/docs`` endpoints. The React
+# build lands directly in ``_STATIC_DIR``, so the UI is served from ``/``.
+if _STATIC_DIR.exists():
+    app.mount("/", StaticFiles(directory=_STATIC_DIR, html=True), name="app")
+else:
+    warnings.warn(
+        f"Static UI directory not found at {_STATIC_DIR}; serving the API only. "
+        "Run 'npm run build' inside frontend/ to generate it.",
+        RuntimeWarning,
+        stacklevel=2,
+    )

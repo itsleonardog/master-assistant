@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    /* Mirrored here because tooling (shadcn CLI) reads this root file instead of
+       the referenced ./tsconfig.app.json. Keep both in sync. */
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

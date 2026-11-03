@@ -33,6 +33,7 @@ from master_assistant.models.schemas import (
 class MonoInputError(ValueError):
     """Raised when a file has fewer than two channels for stereo analysis."""
 
+
 # Side-to-mid ratio (in dB) below which a band is considered effectively mono.
 # -20 dB means the side carries under 1% of the mid energy, which is where a
 # widening plugin or a listener stops perceiving any width. This is a heuristic

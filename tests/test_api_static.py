@@ -1,67 +1,59 @@
-"""Tests for the static UI mount and the root redirect.
+"""Tests for the React UI served by the catch-all static mount.
 
-The UI is plain HTML/CSS/JS served by FastAPI, so these tests only assert that
-the mount is wired correctly, that the media types are right, and that mounting
-``/app`` did not shadow the existing API routes. The JavaScript behavior itself
-is exercised manually in a browser (see the README notes in the step summary):
-there is deliberately no Playwright setup for this MVP.
+The frontend is a Vite/React bundle, so these tests only assert the mount wiring:
+the index document is served, every asset it references resolves, and the static
+mount did not shadow the existing API routes. The JavaScript behavior itself is
+exercised manually in a browser: there is deliberately no Playwright setup.
 """
 
 from __future__ import annotations
+
+import re
+from collections.abc import Iterator
 
 import pytest
 from fastapi.testclient import TestClient
 
 from master_assistant.api.main import app
 
+# Captures the value of every src="..." and href="..." attribute in the document.
+_ASSET_PATTERN = re.compile(r'(?:src|href)="([^"]+)"')
+# Absolute, protocol-relative, inline, or fragment URLs are not served by us.
+_SKIPPED_PREFIXES = ("http://", "https://", "//", "data:", "#", "mailto:")
+
 
 @pytest.fixture()
-def client() -> TestClient:
+def client() -> Iterator[TestClient]:
     """Return a TestClient bound to the real application."""
     with TestClient(app) as test_client:
         yield test_client
 
 
-def test_root_redirects_to_app(client: TestClient) -> None:
-    """GET / must send the browser to the UI, without following the redirect."""
-    response = client.get("/", follow_redirects=False)
-
-    assert response.status_code == 307
-    assert response.headers["location"] == "/app/"
-
-
-def test_index_is_served_as_html(client: TestClient) -> None:
-    """GET /app/ must return the UI page with an HTML content type."""
-    response = client.get("/app/")
+def test_root_serves_index_html(client: TestClient) -> None:
+    """GET / must return the built React document as HTML."""
+    response = client.get("/")
 
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
-    assert "Master Assistant" in response.text
+    assert '<div id="root">' in response.text or "Master Assistant" in response.text
 
 
-def test_index_contains_upload_ui_markers(client: TestClient) -> None:
-    """The served page must include the dropzone, preview, and guide hooks."""
-    response = client.get("/app/")
+def test_index_references_bundled_assets(client: TestClient) -> None:
+    """Every asset referenced by the served index must itself resolve with 200."""
+    index = client.get("/")
+    assert index.status_code == 200
 
-    assert response.status_code == 200
-    for marker in ("dropzone", "preview", "guide"):
-        assert marker in response.text
+    asset_paths = [
+        path
+        for path in _ASSET_PATTERN.findall(index.text)
+        if not path.startswith(_SKIPPED_PREFIXES)
+    ]
 
+    assert asset_paths, "index.html must reference at least one bundled asset"
 
-def test_app_js_is_served(client: TestClient) -> None:
-    """GET /app/app.js must return the controller script."""
-    response = client.get("/app/app.js")
-
-    assert response.status_code == 200
-    assert "javascript" in response.headers["content-type"]
-
-
-def test_stylesheet_is_served(client: TestClient) -> None:
-    """GET /app/style.css must return the stylesheet."""
-    response = client.get("/app/style.css")
-
-    assert response.status_code == 200
-    assert "text/css" in response.headers["content-type"]
+    for path in asset_paths:
+        response = client.get(path)
+        assert response.status_code == 200, f"asset {path} returned {response.status_code}"
 
 
 def test_health_still_works_with_static_mount(client: TestClient) -> None:

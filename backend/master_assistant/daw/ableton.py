@@ -61,9 +61,7 @@ class AbletonAdapter(DawAdapter):
 
         if action_type == "limiter":
             ceiling_dbtp = params.get("ceiling_dbtp", DEFAULT_CEILING_DBTP)
-            reduction_needed_db = params.get(
-                "reduction_needed_db", DEFAULT_REDUCTION_NEEDED_DB
-            )
+            reduction_needed_db = params.get("reduction_needed_db", DEFAULT_REDUCTION_NEEDED_DB)
             return (
                 f"Ableton: Limiter — Ceiling: {ceiling_dbtp:.1f} dB, "
                 "poi verifica il True Peak con un meter. "
@@ -137,7 +135,5 @@ class AbletonAdapter(DawAdapter):
         """
         value = params.get(key)
         if value is None:
-            raise ValueError(
-                f"Ableton {action_type} suggestions require '{key}' in action_params."
-            )
+            raise ValueError(f"Ableton {action_type} suggestions require '{key}' in action_params.")
         return value

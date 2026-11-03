@@ -43,10 +43,11 @@ package-dir = { "" = "backend" }
 where = ["backend"]
 include = ["master_assistant*"]
 
-# The browser UI is plain static files co-located with the API module; ship them
+# The browser UI is a Vite/React build co-located with the API module; ship it
 # with the wheel so ``StaticFiles(directory=_STATIC_DIR)`` resolves after install.
+# ``**/*`` includes the generated ``assets/`` subdirectories.
 [tool.setuptools.package-data]
-master_assistant = ["api/static/*"]
+master_assistant = ["api/static/**/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

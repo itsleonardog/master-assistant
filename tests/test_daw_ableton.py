@@ -76,9 +76,7 @@ def test_gain_without_gain_db_raises(adapter: AbletonAdapter) -> None:
 
 def test_limiter_renders_ceiling_and_reduction(adapter: AbletonAdapter) -> None:
     """A limiter suggestion exposes ceiling and required reduction."""
-    text = adapter.render(
-        _suggestion("limiter", ceiling_dbtp=-1.0, reduction_needed_db=2.0)
-    )
+    text = adapter.render(_suggestion("limiter", ceiling_dbtp=-1.0, reduction_needed_db=2.0))
 
     _assert_single_line(text)
     assert "Limiter" in text
@@ -96,9 +94,7 @@ def test_limiter_uses_documented_defaults(adapter: AbletonAdapter) -> None:
 
 def test_eq_cut_renders_bell_band(adapter: AbletonAdapter) -> None:
     """An EQ cut maps to EQ Eight band 1 with frequency, gain, and Q."""
-    text = adapter.render(
-        _suggestion("eq_cut", freq_hz=315.0, gain_db=-3.5, q=1.2)
-    )
+    text = adapter.render(_suggestion("eq_cut", freq_hz=315.0, gain_db=-3.5, q=1.2))
 
     _assert_single_line(text)
     assert "EQ Eight" in text
@@ -162,9 +158,7 @@ def test_compressor_defaults_to_four_lu(adapter: AbletonAdapter) -> None:
 
 def test_eq_boost_renders_bell_band(adapter: AbletonAdapter) -> None:
     """An EQ boost uses the same EQ Eight rendering as a cut."""
-    text = adapter.render(
-        _suggestion("eq_boost", freq_hz=8000.0, gain_db=2.5, q=0.7)
-    )
+    text = adapter.render(_suggestion("eq_boost", freq_hz=8000.0, gain_db=2.5, q=0.7))
 
     _assert_single_line(text)
     assert "EQ Eight" in text

@@ -39,6 +39,11 @@ coverage.xml
 .idea/
 .DS_Store
 
+# Frontend build artifacts (the Vite output is generated, never committed)
+frontend/node_modules/
+frontend/dist/
+backend/master_assistant/api/static/
+
 # Local audio files (use small, licensed fixtures in tests instead)
 audio/
 *.mp3

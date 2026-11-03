@@ -1,76 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Confronta la tua traccia con un riferimento e ottieni suggerimenti di mastering pronti per il tuo DAW."
+    />
     <title>Master Assistant</title>
-    <link rel="stylesheet" href="style.css" />
+    <script type="module" crossorigin src="/assets/index-w948-WK2.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-1_unrF-T.css">
   </head>
   <body>
-    <header>
-      <h1>Master Assistant</h1>
-      <p class="subtitle">
-        Confronta la tua traccia con un riferimento e ottieni suggerimenti di mastering
-        pronti per il tuo DAW.
-      </p>
-    </header>
-
-    <main>
-      <form id="analyze-form" novalidate>
-        <div
-          id="dropzone"
-          role="button"
-          tabindex="0"
-          aria-label="Trascina qui i tuoi file audio oppure clicca per selezionarli"
-        >
-          <p class="dropzone-title">Trascina qui i tuoi file audio</p>
-          <p class="dropzone-sub">oppure clicca per selezionare</p>
-          <p class="dropzone-hint">
-            1 file &rarr; la tua traccia &middot; 2 file &rarr; la tua traccia + reference
-          </p>
-          <input
-            id="file-input"
-            type="file"
-            accept="audio/*,.wav,.flac,.aiff"
-            multiple
-            hidden
-          />
-        </div>
-
-        <div id="preview" class="hidden">
-          <div class="preview-card" id="preview-user"></div>
-          <div class="preview-card" id="preview-reference"></div>
-        </div>
-
-        <div class="controls">
-          <label for="daw">DAW</label>
-          <select id="daw" name="daw">
-            <option value="ableton">Ableton Live</option>
-          </select>
-          <button id="submit-button" type="submit" disabled>Analizza</button>
-        </div>
-      </form>
-
-      <div id="status" role="status" aria-live="polite"></div>
-      <div id="results"></div>
-    </main>
-
-    <footer>
-      I file vengono elaborati in memoria e cancellati subito.
-    </footer>
-
-    <template id="guide-template">
-      <div class="guide-box">
-        <h3>Come procedere</h3>
-        <ol>
-          <li>Applica i suggerimenti in ordine di priorità (P1 &rarr; P5).</li>
-          <li>Dopo ogni modifica, ricarica la traccia per verificare il delta.</li>
-          <li>Ripeti finché i suggerimenti si riducono a zero.</li>
-        </ol>
-      </div>
-    </template>
-
-    <script src="app.js"></script>
-    <!-- testato manualmente il: 2026-11-03 -->
+    <div id="root"></div>
   </body>
 </html>
