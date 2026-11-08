@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { Suggestion, SuggestionSeverity } from "@/types";
@@ -18,13 +20,17 @@ interface SuggestionCardProps {
 
 /** One structured suggestion with its DAW-specific instruction. */
 export function SuggestionCard({ suggestion, rendered }: SuggestionCardProps) {
+  const { t } = useTranslation();
   const severity = suggestion.severity ?? "info";
 
   return (
     <Card>
       <CardContent className="flex gap-4 p-4">
         <div
-          aria-label={`Priorità ${suggestion.priority}, severità ${severity}`}
+          aria-label={t("suggestions.priority_aria", {
+            priority: suggestion.priority,
+            severity,
+          })}
           className={cn(
             "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
             SEVERITY_CLASSES[severity],
@@ -38,7 +44,7 @@ export function SuggestionCard({ suggestion, rendered }: SuggestionCardProps) {
 
           <div className="rounded-md bg-muted px-3 py-2">
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              In Ableton:
+              {t("suggestions.in_daw")}
             </span>
             <p className="mt-1 break-words font-mono text-sm">{rendered || "\u2014"}</p>
           </div>

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -17,29 +19,29 @@ interface StereoSectionProps {
 
 /** Overall stereo deltas, or the mono fallback message. */
 export function StereoSection({ stereo }: StereoSectionProps) {
+  const { t } = useTranslation();
+
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Stereo</CardTitle>
+        <CardTitle className="text-lg">{t("stereo.section_title")}</CardTitle>
       </CardHeader>
       <CardContent>
         {!stereo ? (
-          <p className="text-sm text-muted-foreground">
-            Analisi stereo non disponibile (file mono).
-          </p>
+          <p className="text-sm text-muted-foreground">{t("stereo.no_stereo")}</p>
         ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Metrica</TableHead>
-                  <TableHead className="text-right">Delta</TableHead>
+                  <TableHead>{t("stereo.col_metric")}</TableHead>
+                  <TableHead className="text-right">{t("stereo.col_delta")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow>
                   <TableHead scope="row" className="font-medium">
-                    Correlation media
+                    {t("stereo.metric_correlation")}
                   </TableHead>
                   <TableCell className="text-right tabular-nums">
                     {formatNumber(stereo.overall_correlation_delta, 2)}
@@ -47,7 +49,7 @@ export function StereoSection({ stereo }: StereoSectionProps) {
                 </TableRow>
                 <TableRow>
                   <TableHead scope="row" className="font-medium">
-                    Side/Mid medio (dB)
+                    {t("stereo.metric_side_mid")}
                   </TableHead>
                   <TableCell className="text-right tabular-nums">
                     {formatNumber(stereo.overall_side_to_mid_delta_db, 1)}

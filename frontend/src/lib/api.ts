@@ -2,8 +2,8 @@
  * Thin client for `POST /analyze`.
  *
  * The request is aborted after {@link REQUEST_TIMEOUT_MS} so an oversized upload
- * or a stuck server cannot leave the UI spinning forever. Error messages mirror
- * the wording of the legacy `app.js` controller.
+ * or a stuck server cannot leave the UI spinning forever. Failures are classified
+ * with an {@link ApiErrorKind} so the UI can localize them.
  */
 
 import type { AnalysisResponse } from "@/types";
@@ -11,19 +11,31 @@ import type { AnalysisResponse } from "@/types";
 /** Abort the upload after this many milliseconds. */
 export const REQUEST_TIMEOUT_MS = 60_000;
 
-/** Message shown when the abort controller fires. */
-export const TIMEOUT_MESSAGE = "Timeout: il file è troppo grande o il server non risponde";
+/**
+ * Discriminant describing why an API call failed.
+ *
+ * The UI maps each kind to a localized message; only `server` carries a
+ * backend-provided detail that is displayed verbatim.
+ */
+export type ApiErrorKind =
+  | "timeout"
+  | "validation"
+  | "network"
+  | "unknown"
+  | "server";
 
-/** Message shown for a Pydantic 422 validation error. */
-export const VALIDATION_MESSAGE = "Compila tutti i campi richiesti.";
-
-/** Message shown when the server returns an unparseable error body. */
-export const UNKNOWN_ERROR_MESSAGE = "Errore sconosciuto";
-
-/** Error carrying a user-facing message. */
+/**
+ * Error carrying an {@link ApiErrorKind} discriminant plus diagnostic text.
+ *
+ * The `message` is diagnostic only (except for `server` errors, where it holds
+ * the backend detail); user-facing strings live in the locale files.
+ */
 export class ApiError extends Error {
-  constructor(message: string) {
+  public readonly kind: ApiErrorKind;
+
+  constructor(kind: ApiErrorKind, message: string) {
     super(message);
+    this.kind = kind;
     this.name = "ApiError";
   }
 }
@@ -39,8 +51,8 @@ export interface AnalyzeFilesArgs {
  *
  * @param args Files to analyze plus the target DAW identifier.
  * @returns Parsed `AnalysisResponse`.
- * @throws ApiError With a user-facing message for timeouts, network failures,
- * and non-2xx responses.
+ * @throws ApiError With a discriminant describing why the request failed
+ * (timeout, validation, network, server, or unknown).
  */
 export async function analyzeFiles({
   userFile,
@@ -63,7 +75,7 @@ export async function analyzeFiles({
     });
 
     if (!response.ok) {
-      throw new ApiError(await readErrorMessage(response));
+      throw await readApiError(response);
     }
 
     return (await response.json()) as AnalysisResponse;
@@ -72,29 +84,32 @@ export async function analyzeFiles({
       throw error;
     }
     if (error instanceof Error && error.name === "AbortError") {
-      throw new ApiError(TIMEOUT_MESSAGE);
+      throw new ApiError("timeout", "Request aborted after timeout");
     }
-    throw new ApiError(`Impossibile contattare il server: ${String(error)}`);
+    throw new ApiError("network", String(error));
   } finally {
     window.clearTimeout(timeoutId);
   }
 }
 
 /**
- * Map an error response body to a user-facing message.
+ * Map an error response body to a typed {@link ApiError}.
  *
  * @param response Failed response.
- * @returns The `detail` string, the validation message for a `detail` array, or
- * a generic fallback when the body is not JSON.
+ * @returns A `validation` error for a `detail` array, a `server` error carrying
+ * the backend `detail` string, or an `unknown` error when the body is not JSON.
  */
-async function readErrorMessage(response: Response): Promise<string> {
+async function readApiError(response: Response): Promise<ApiError> {
   try {
     const payload = (await response.json()) as { detail?: unknown } | null;
     if (payload && payload.detail) {
-      return Array.isArray(payload.detail) ? VALIDATION_MESSAGE : String(payload.detail);
+      if (Array.isArray(payload.detail)) {
+        return new ApiError("validation", "Request validation failed");
+      }
+      return new ApiError("server", String(payload.detail));
     }
   } catch {
-    // Non-JSON body: fall through to the generic message.
+    // Non-JSON body: fall through to the generic error.
   }
-  return UNKNOWN_ERROR_MESSAGE;
+  return new ApiError("unknown", `Unexpected ${response.status} response`);
 }

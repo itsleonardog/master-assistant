@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -19,15 +21,17 @@ interface ControlsProps {
 
 /** DAW picker plus the analyze button. */
 export function Controls({ daw, onDawChange, loading, canSubmit }: ControlsProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="daw" className="text-sm font-medium">
-          DAW
+          {t("controls.daw_label")}
         </label>
         <Select value={daw} onValueChange={onDawChange} disabled={loading}>
           <SelectTrigger id="daw" className="w-full sm:w-[200px]">
-            <SelectValue placeholder="Seleziona DAW" />
+            <SelectValue placeholder={t("controls.daw_placeholder")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ableton">Ableton Live</SelectItem>
@@ -42,10 +46,10 @@ export function Controls({ daw, onDawChange, loading, canSubmit }: ControlsProps
               aria-hidden="true"
               className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
             />
-            Analisi in corso...
+            {t("controls.submit_loading")}
           </>
         ) : (
-          "Analizza"
+          t("controls.submit")
         )}
       </Button>
     </div>

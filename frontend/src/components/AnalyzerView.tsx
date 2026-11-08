@@ -1,10 +1,12 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Controls } from "@/components/Controls";
 import { EmptyState } from "@/components/EmptyState";
 import { GuideBox } from "@/components/GuideBox";
 import { Header } from "@/components/Header";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LoadingStatus } from "@/components/LoadingStatus";
 import { LoudnessSection } from "@/components/LoudnessSection";
 import { PreviewCard } from "@/components/PreviewCard";
@@ -34,6 +36,7 @@ interface AnalyzerViewProps {
  * composition of the result sections.
  */
 export function AnalyzerView({ onBack }: AnalyzerViewProps) {
+  const { t } = useTranslation();
   const [userFile, setUserFile] = useState<File | null>(null);
   const [referenceFile, setReferenceFile] = useState<File | null>(null);
   const [daw, setDaw] = useState("ableton");
@@ -57,7 +60,7 @@ export function AnalyzerView({ onBack }: AnalyzerViewProps) {
       return;
     }
     if (files.length > 2) {
-      window.alert("Trascina 1 o 2 file");
+      window.alert(t("analyzer.too_many_files"));
       return;
     }
     if (files.length === 2) {
@@ -76,13 +79,33 @@ export function AnalyzerView({ onBack }: AnalyzerViewProps) {
     }
   }
 
+  /** Translate a failed request into the status message for the active locale. */
+  function resolveErrorMessage(error: unknown): string {
+    if (!(error instanceof ApiError)) {
+      return t("analyzer.status_network_error", { error: String(error) });
+    }
+    switch (error.kind) {
+      case "timeout":
+        return t("analyzer.status_timeout");
+      case "validation":
+        return t("analyzer.status_validation_error");
+      case "network":
+        return t("analyzer.status_network_error", { error: error.message });
+      case "unknown":
+        return t("analyzer.status_unknown_error");
+      case "server":
+      default:
+        return error.message;
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (loading) {
       return;
     }
     if (!userFile || !referenceFile || !ready) {
-      setStatus({ message: "Seleziona due file audio validi prima di analizzare.", isError: true });
+      setStatus({ message: t("analyzer.status_select_both"), isError: true });
       return;
     }
 
@@ -93,13 +116,9 @@ export function AnalyzerView({ onBack }: AnalyzerViewProps) {
     try {
       const payload = await analyzeFiles({ userFile, referenceFile, daw });
       setResult(payload);
-      setStatus({ message: "Analisi completata.", isError: false });
+      setStatus({ message: t("analyzer.status_done"), isError: false });
     } catch (error) {
-      const message =
-        error instanceof ApiError
-          ? error.message
-          : `Impossibile contattare il server: ${String(error)}`;
-      setStatus({ message, isError: true });
+      setStatus({ message: resolveErrorMessage(error), isError: true });
     } finally {
       setLoading(false);
     }
@@ -109,13 +128,16 @@ export function AnalyzerView({ onBack }: AnalyzerViewProps) {
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-12">
-      <button
-        type="button"
-        onClick={onBack}
-        className="mb-4 self-start text-sm text-muted-foreground hover:text-foreground"
-      >
-        ← Home
-      </button>
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-sm text-muted-foreground hover:text-foreground"
+        >
+          {t("analyzer.back_home")}
+        </button>
+        <LanguageSwitcher />
+      </div>
 
       <Header />
 
@@ -126,13 +148,13 @@ export function AnalyzerView({ onBack }: AnalyzerViewProps) {
           {hasAnyFile && (
             <div className="grid gap-3 sm:grid-cols-2">
               <PreviewCard
-                label="La tua traccia"
+                label={t("preview.label_user")}
                 file={userFile}
                 duration={userDuration}
                 onRemove={() => setUserFile(null)}
               />
               <PreviewCard
-                label="Reference"
+                label={t("preview.label_reference")}
                 file={referenceFile}
                 duration={referenceDuration}
                 onRemove={() => setReferenceFile(null)}
@@ -170,7 +192,7 @@ export function AnalyzerView({ onBack }: AnalyzerViewProps) {
       </main>
 
       <footer className="mt-auto pt-4 text-center text-xs text-muted-foreground sm:text-left">
-        I file vengono elaborati in memoria e cancellati subito.
+        {t("analyzer.footer_note")}
       </footer>
     </div>
   );

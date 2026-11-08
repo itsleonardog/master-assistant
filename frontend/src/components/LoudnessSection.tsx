@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -31,23 +33,25 @@ interface LoudnessSectionProps {
 
 /** Loudness summary with colour-coded deltas. */
 export function LoudnessSection({ report }: LoudnessSectionProps) {
+  const { t } = useTranslation();
+
   const rows: LoudnessRow[] = [
     {
-      label: "Integrated LUFS",
+      label: t("loudness.metric_lufs"),
       user: report.user_loudness.integrated_lufs,
       reference: report.reference_loudness.integrated_lufs,
       delta: report.loudness_delta.integrated_lufs_delta,
       threshold: LUFS_DELTA_THRESHOLD_DB,
     },
     {
-      label: "True Peak (dBTP)",
+      label: t("loudness.metric_true_peak"),
       user: report.user_loudness.true_peak_dbtp,
       reference: report.reference_loudness.true_peak_dbtp,
       delta: report.loudness_delta.true_peak_dbtp_delta,
       threshold: TRUE_PEAK_DELTA_THRESHOLD_DB,
     },
     {
-      label: "Loudness Range (LU)",
+      label: t("loudness.metric_lra"),
       user: report.user_loudness.loudness_range_lu,
       reference: report.reference_loudness.loudness_range_lu,
       delta: report.loudness_delta.loudness_range_lu_delta,
@@ -58,16 +62,16 @@ export function LoudnessSection({ report }: LoudnessSectionProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Sintesi loudness</CardTitle>
+        <CardTitle className="text-lg">{t("loudness.section_title")}</CardTitle>
       </CardHeader>
       <CardContent className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Metrica</TableHead>
-              <TableHead className="text-right">User</TableHead>
-              <TableHead className="text-right">Reference</TableHead>
-              <TableHead className="text-right">Delta</TableHead>
+              <TableHead>{t("loudness.col_metric")}</TableHead>
+              <TableHead className="text-right">{t("loudness.col_user")}</TableHead>
+              <TableHead className="text-right">{t("loudness.col_reference")}</TableHead>
+              <TableHead className="text-right">{t("loudness.col_delta")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

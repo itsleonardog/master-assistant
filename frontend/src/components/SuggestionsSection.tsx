@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import type { Suggestion } from "@/types";
 
 import { EmptyState } from "./EmptyState";
@@ -12,6 +14,8 @@ interface SuggestionsSectionProps {
 
 /** Suggestion cards ordered by ascending priority. */
 export function SuggestionsSection({ suggestions, rendered }: SuggestionsSectionProps) {
+  const { t } = useTranslation();
+
   const ordered = suggestions
     .map((suggestion, index) => ({ suggestion, rendered: rendered[index] ?? "" }))
     .sort((a, b) => (a.suggestion.priority || 0) - (b.suggestion.priority || 0));
@@ -22,7 +26,7 @@ export function SuggestionsSection({ suggestions, rendered }: SuggestionsSection
 
   return (
     <section className="space-y-3">
-      <h3 className="text-lg font-semibold">Suggerimenti</h3>
+      <h3 className="text-lg font-semibold">{t("suggestions.section_title")}</h3>
       <div className="space-y-3">
         {ordered.map((entry) => (
           <SuggestionCard

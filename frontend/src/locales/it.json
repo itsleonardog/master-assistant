@@ -1,0 +1,122 @@
+{
+  "common": {
+    "language_label": "Lingua",
+    "language_it": "Italiano",
+    "language_en": "English"
+  },
+  "landing": {
+    "badge": "Open source · Educativo",
+    "headline": "Il mastering, spiegato ai producer.",
+    "subheadline": "Analizza la tua traccia contro una reference commerciale. Ricevi suggerimenti concreti per la tua DAW. Impara a masterizzare in autonomia, una traccia alla volta.",
+    "cta_primary": "Apri l'analizzatore →",
+    "cta_secondary": "Cos'è questo progetto?",
+    "mission_title": "La nostra missione",
+    "mission_body": "Crediamo che il mastering di qualità non debba essere riservato a chi ha uno studio professionale. Milioni di home producer producono musica eccellente che non riesce a competere a livello sonoro perché manca un passaggio di mastering fatto bene. Vogliamo colmare quel divario con la conoscenza, non con la magia.",
+    "audience_title": "Per chi è fatto",
+    "audience_body": "Home producer che vogliono chiudere i propri brani con un master competitivo, senza dover imparare un mestiere da zero.",
+    "how_title": "Come funziona",
+    "how_body": "Carichi la tua traccia e una reference commerciale. L'app misura loudness, spettro e immagine stereo. Ti dice esattamente cosa sistemare, con quali plugin della tua DAW nativa.",
+    "no_auto_title": "Non masterizziamo per te.",
+    "no_auto_body": "Nessun algoritmo magico. Nessun 'carica e scarica il master pronto'. Gli strumenti automatici ti danno un file — noi ti diamo la comprensione di come arrivarci. Se cerchi un pulsante che faccia tutto, questo progetto non fa per te. Se vuoi imparare a farlo, benvenuto.",
+    "steps_title": "Come funziona, in 4 passi",
+    "step1": "Carica la tua traccia non masterizzata e una reference commerciale dello stesso genere.",
+    "step2": "L'app analizza loudness, spettro e immagine stereo, e li confronta con la reference.",
+    "step3": "Ricevi suggerimenti concreti: quale plugin, quale parametro, di quanto. Specifici per la tua DAW.",
+    "step4": "Applichi, ricarichi, iteri. Con la pratica, i suggerimenti diventano superflui: il tuo orecchio è abbastanza.",
+    "purpose_title": "Uno scopo educativo",
+    "purpose_body": "Ogni suggerimento include il perché: cosa stai correggendo, in che misura, e che effetto avrà. Non impari a memoria 'se hai X dB taglia Y Hz', impari a riconoscere cosa suona storto e cosa fare. È un percorso. Con tanta pratica, i suggerimenti diventano superflui: il tuo orecchio è abbastanza.",
+    "open_title": "Open source, per davvero",
+    "open_body": "Il codice è aperto. Puoi leggerlo, forkarlo, migliorarlo. Se sai programmare, proponi una pull request. Se sai masterizzare, condividi i tuoi casi d'uso. Se stai imparando, segnala cosa non funziona. Ogni contributo rende lo strumento migliore per tutti.",
+    "github_cta": "Vedi su GitHub ↗",
+    "footer": "Fatto per home producer · Open source · {{year}}"
+  },
+  "analyzer": {
+    "back_home": "← Home",
+    "status_done": "Analisi completata.",
+    "status_select_both": "Seleziona due file audio validi prima di analizzare.",
+    "status_network_error": "Impossibile contattare il server: {{error}}",
+    "status_unknown_error": "Errore sconosciuto",
+    "status_validation_error": "Compila tutti i campi richiesti.",
+    "status_timeout": "Timeout: il file è troppo grande o il server non risponde",
+    "status_loading": "Analisi in corso...",
+    "too_many_files": "Trascina 1 o 2 file",
+    "footer_note": "I file vengono elaborati in memoria e cancellati subito."
+  },
+  "header": {
+    "title": "Master Assistant",
+    "subtitle": "Confronta la tua traccia con un riferimento e ottieni suggerimenti di mastering pronti per il tuo DAW."
+  },
+  "upload": {
+    "aria_label": "Trascina qui i tuoi file audio oppure clicca per selezionarli",
+    "dropzone_title": "Trascina qui i tuoi file audio",
+    "dropzone_sub": "oppure clicca per selezionare",
+    "dropzone_hint": "1 file → la tua traccia · 2 file → la tua traccia + reference"
+  },
+  "preview": {
+    "no_file": "Nessun file selezionato",
+    "unsupported_format": "Formato non supportato. Usa WAV, FLAC, AIFF, MP3 o OGG.",
+    "remove": "Rimuovi",
+    "remove_aria": "Rimuovi file {{name}}",
+    "label_user": "La tua traccia",
+    "label_reference": "Reference"
+  },
+  "controls": {
+    "daw_label": "DAW",
+    "daw_placeholder": "Seleziona DAW",
+    "submit": "Analizza",
+    "submit_loading": "Analisi in corso..."
+  },
+  "loudness": {
+    "section_title": "Sintesi loudness",
+    "col_metric": "Metrica",
+    "col_user": "User",
+    "col_reference": "Reference",
+    "col_delta": "Delta",
+    "metric_lufs": "Integrated LUFS",
+    "metric_true_peak": "True Peak (dBTP)",
+    "metric_lra": "Loudness Range (LU)"
+  },
+  "spectrum": {
+    "section_title": "Spettro",
+    "no_data": "Dati spettrali non disponibili.",
+    "no_imbalance": "Nessuno squilibrio tonale rilevato.",
+    "hint": "Passa il mouse per esplorare · Clicca per fissare · Esc per sbloccare",
+    "col_band": "Banda (Hz)",
+    "col_user": "User (dB)",
+    "col_reference": "Reference (dB)",
+    "col_delta": "Delta (dB)",
+    "col_severity": "Severity",
+    "legend_user": "La tua traccia",
+    "legend_reference": "Reference",
+    "tooltip_delta": "Delta"
+  },
+  "stereo": {
+    "section_title": "Stereo",
+    "no_stereo": "Analisi stereo non disponibile (file mono).",
+    "col_metric": "Metrica",
+    "col_delta": "Delta",
+    "metric_correlation": "Correlation media",
+    "metric_side_mid": "Side/Mid medio (dB)"
+  },
+  "suggestions": {
+    "section_title": "Suggerimenti",
+    "in_daw": "In Ableton:",
+    "priority_aria": "Priorità {{priority}}, severità {{severity}}"
+  },
+  "empty_state": {
+    "title": "Ottimo lavoro!",
+    "body": "La traccia è già vicina al riferimento. Nessun intervento necessario."
+  },
+  "guide": {
+    "title": "Come procedere",
+    "step1": "Applica i suggerimenti in ordine di priorità (P1 → P5).",
+    "step2": "Dopo ogni modifica, ricarica la traccia per verificare il delta.",
+    "step3": "Ripeti finché i suggerimenti si riducono a zero."
+  },
+  "warnings": {
+    "section_title": "Warning"
+  },
+  "footer": {
+    "text": "Fatto per home producer · Open source · {{year}}"
+  }
+}

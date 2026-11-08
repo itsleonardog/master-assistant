@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import type { ChangeEvent, DragEvent, KeyboardEvent, MouseEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
 
@@ -15,6 +16,7 @@ interface UploadZoneProps {
  * stopped from bubbling back and reopening the picker recursively.
  */
 export function UploadZone({ onFilesSelected }: UploadZoneProps) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
@@ -65,7 +67,7 @@ export function UploadZone({ onFilesSelected }: UploadZoneProps) {
     <div
       role="button"
       tabIndex={0}
-      aria-label="Trascina qui i tuoi file audio oppure clicca per selezionarli"
+      aria-label={t("upload.aria_label")}
       onClick={openPicker}
       onKeyDown={handleKeyDown}
       onDragOver={handleDragOver}
@@ -77,11 +79,9 @@ export function UploadZone({ onFilesSelected }: UploadZoneProps) {
         dragOver && "border-primary bg-primary/5",
       )}
     >
-      <p className="text-base font-medium">Trascina qui i tuoi file audio</p>
-      <p className="text-sm text-muted-foreground">oppure clicca per selezionare</p>
-      <p className="text-xs text-muted-foreground">
-        1 file → la tua traccia · 2 file → la tua traccia + reference
-      </p>
+      <p className="text-base font-medium">{t("upload.dropzone_title")}</p>
+      <p className="text-sm text-muted-foreground">{t("upload.dropzone_sub")}</p>
+      <p className="text-xs text-muted-foreground">{t("upload.dropzone_hint")}</p>
       <input
         ref={inputRef}
         type="file"

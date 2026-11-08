@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   CartesianGrid,
   Line,
@@ -31,17 +32,6 @@ const CHART_REFERENCE_COLOR = "hsl(var(--chart-reference))";
 
 /** Radius of the dot drawn on the highlighted band. */
 const HIGHLIGHT_DOT_RADIUS = 6;
-
-const chartConfig = {
-  user_db: {
-    label: "La tua traccia",
-    color: CHART_USER_COLOR,
-  },
-  reference_db: {
-    label: "Reference",
-    color: CHART_REFERENCE_COLOR,
-  },
-} satisfies ChartConfig;
 
 interface SpectrumChartProps {
   /** Third-octave band comparison produced by the API. */
@@ -116,6 +106,8 @@ interface HighlightedBandTooltipProps {
 
 /** Tooltip shown only while a band is highlighted; otherwise no tooltip. */
 function HighlightedBandTooltip({ band, active }: HighlightedBandTooltipProps) {
+  const { t } = useTranslation();
+
   if (!active) {
     return null;
   }
@@ -124,13 +116,13 @@ function HighlightedBandTooltip({ band, active }: HighlightedBandTooltipProps) {
     <div className="grid gap-1 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
       <span className="font-medium">{formatFrequencyTick(band.freq_hz)} Hz</span>
       <span className="flex items-center justify-between gap-4 text-muted-foreground">
-        La tua traccia
+        {t("spectrum.legend_user")}
         <span className="font-mono font-medium tabular-nums text-foreground">
           {band.user_db.toFixed(1)} dB
         </span>
       </span>
       <span className="flex items-center justify-between gap-4 text-muted-foreground">
-        Reference
+        {t("spectrum.legend_reference")}
         <span className="font-mono font-medium tabular-nums text-foreground">
           {band.reference_db.toFixed(1)} dB
         </span>
@@ -138,7 +130,7 @@ function HighlightedBandTooltip({ band, active }: HighlightedBandTooltipProps) {
       <span
         className={`flex items-center justify-between gap-4 font-medium ${severityTextClass(band.severity)}`}
       >
-        Delta
+        {t("spectrum.tooltip_delta")}
         <span className="font-mono tabular-nums">{band.delta_db.toFixed(1)} dB</span>
       </span>
     </div>
@@ -161,6 +153,23 @@ export function SpectrumChart({
   highlightedFreqHz = null,
   isPinned = false,
 }: SpectrumChartProps) {
+  const { t } = useTranslation();
+
+  const chartConfig = useMemo(
+    () =>
+      ({
+        user_db: {
+          label: t("spectrum.legend_user"),
+          color: CHART_USER_COLOR,
+        },
+        reference_db: {
+          label: t("spectrum.legend_reference"),
+          color: CHART_REFERENCE_COLOR,
+        },
+      }) satisfies ChartConfig,
+    [t],
+  );
+
   const rows = useMemo<ChartRow[]>(() => {
     const values = bands
       .flatMap((band) => [band.user_db, band.reference_db])
@@ -189,7 +198,7 @@ export function SpectrumChart({
   }, [bands]);
 
   if (rows.length === 0) {
-    return <p className="text-sm text-muted-foreground">Dati spettrali non disponibili.</p>;
+    return <p className="text-sm text-muted-foreground">{t("spectrum.no_data")}</p>;
   }
 
   const floor = rows[0].floor;

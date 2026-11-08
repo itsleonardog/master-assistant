@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatBytes, formatDuration, isAudioFile } from "@/lib/format";
@@ -21,6 +23,8 @@ interface PreviewCardProps {
  * one the backend can decode.
  */
 export function PreviewCard({ label, file, duration, onRemove }: PreviewCardProps) {
+  const { t } = useTranslation();
+
   if (!file) {
     return (
       <Card className="border-dashed bg-muted/20">
@@ -28,7 +32,7 @@ export function PreviewCard({ label, file, duration, onRemove }: PreviewCardProp
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {label}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">Nessun file selezionato</p>
+          <p className="mt-2 text-sm text-muted-foreground">{t("preview.no_file")}</p>
         </CardContent>
       </Card>
     );
@@ -69,7 +73,7 @@ export function PreviewCard({ label, file, duration, onRemove }: PreviewCardProp
 
         {!valid && (
           <p className="mt-2 text-xs text-red-600 dark:text-red-400">
-            Formato non supportato. Usa WAV, FLAC, AIFF, MP3 o OGG.
+            {t("preview.unsupported_format")}
           </p>
         )}
 
@@ -78,10 +82,10 @@ export function PreviewCard({ label, file, duration, onRemove }: PreviewCardProp
           variant="ghost"
           size="sm"
           className="mt-3"
-          aria-label={`Rimuovi file ${file.name}`}
+          aria-label={t("preview.remove_aria", { name: file.name })}
           onClick={onRemove}
         >
-          Rimuovi
+          {t("preview.remove")}
         </Button>
       </CardContent>
     </Card>

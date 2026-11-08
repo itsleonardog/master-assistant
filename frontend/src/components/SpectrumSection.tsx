@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -36,6 +37,7 @@ interface SpectrumSectionProps {
  * stale selection stick around.
  */
 export function SpectrumSection({ bands }: SpectrumSectionProps) {
+  const { t } = useTranslation();
   const [hoveredFreqHz, setHoveredFreqHz] = useState<number | null>(null);
   const [pinnedFreqHz, setPinnedFreqHz] = useState<number | null>(null);
 
@@ -92,11 +94,11 @@ export function SpectrumSection({ bands }: SpectrumSectionProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">Spettro</CardTitle>
+        <CardTitle className="text-lg">{t("spectrum.section_title")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {bands.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Dati spettrali non disponibili.</p>
+          <p className="text-sm text-muted-foreground">{t("spectrum.no_data")}</p>
         ) : (
           <div data-spectrum-scope="chart">
             <SpectrumChart
@@ -108,21 +110,21 @@ export function SpectrumSection({ bands }: SpectrumSectionProps) {
         )}
 
         {problems.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nessuno squilibrio tonale rilevato.</p>
+          <p className="text-sm text-muted-foreground">{t("spectrum.no_imbalance")}</p>
         ) : (
           <div className="space-y-2">
             <p className="text-right text-xs text-muted-foreground">
-              Passa il mouse per esplorare · Clicca per fissare · Esc per sbloccare
+              {t("spectrum.hint")}
             </p>
             <div className="overflow-x-auto" data-spectrum-scope="table">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Banda (Hz)</TableHead>
-                    <TableHead className="text-right">User (dB)</TableHead>
-                    <TableHead className="text-right">Reference (dB)</TableHead>
-                    <TableHead className="text-right">Delta (dB)</TableHead>
-                    <TableHead>Severity</TableHead>
+                    <TableHead>{t("spectrum.col_band")}</TableHead>
+                    <TableHead className="text-right">{t("spectrum.col_user")}</TableHead>
+                    <TableHead className="text-right">{t("spectrum.col_reference")}</TableHead>
+                    <TableHead className="text-right">{t("spectrum.col_delta")}</TableHead>
+                    <TableHead>{t("spectrum.col_severity")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface WarningsSectionProps {
@@ -7,6 +9,8 @@ interface WarningsSectionProps {
 
 /** List of analysis warnings; renders nothing when there are none. */
 export function WarningsSection({ warnings }: WarningsSectionProps) {
+  const { t } = useTranslation();
+
   if (warnings.length === 0) {
     return null;
   }
@@ -14,7 +18,9 @@ export function WarningsSection({ warnings }: WarningsSectionProps) {
   return (
     <Card className="border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg text-amber-900 dark:text-amber-100">Warning</CardTitle>
+        <CardTitle className="text-lg text-amber-900 dark:text-amber-100">
+          {t("warnings.section_title")}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ul className="list-inside list-disc space-y-1 text-sm text-amber-900 dark:text-amber-100">

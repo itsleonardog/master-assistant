@@ -1,0 +1,122 @@
+{
+  "common": {
+    "language_label": "Language",
+    "language_it": "Italiano",
+    "language_en": "English"
+  },
+  "landing": {
+    "badge": "Open source · Educational",
+    "headline": "Mastering, explained to producers.",
+    "subheadline": "Analyze your track against a commercial reference. Get concrete suggestions for your DAW. Learn to master on your own, one track at a time.",
+    "cta_primary": "Open the analyzer →",
+    "cta_secondary": "What is this project?",
+    "mission_title": "Our mission",
+    "mission_body": "We believe quality mastering shouldn't be reserved for those with a professional studio. Millions of home producers make excellent music that can't compete sonically because it's missing a well-executed mastering pass. We want to close that gap with knowledge, not magic.",
+    "audience_title": "Who it's for",
+    "audience_body": "Home producers who want to finish their tracks with a competitive master, without having to learn a craft from scratch.",
+    "how_title": "How it works",
+    "how_body": "You upload your track and a commercial reference. The app measures loudness, spectrum and stereo image. Then it tells you exactly what to fix, and which native DAW plugins to use.",
+    "no_auto_title": "We don't master for you.",
+    "no_auto_body": "No magic algorithm. No 'upload and download the finished master'. Automatic tools hand you a file — we give you the understanding to get there yourself. If you want a button that does it all, this project isn't for you. If you want to learn how, welcome.",
+    "steps_title": "How it works, in 4 steps",
+    "step1": "Upload your unmastered track and a commercial reference from the same genre.",
+    "step2": "The app analyzes loudness, spectrum and stereo image, and compares them with the reference.",
+    "step3": "You get concrete advice: which plugin, which parameter, by how much — specific to your DAW.",
+    "step4": "Apply, re-upload, repeat. With practice, the suggestions become unnecessary: your ears are enough.",
+    "purpose_title": "An educational goal",
+    "purpose_body": "Every suggestion explains the why: what you're correcting, by how much, and what effect it will have. You don't memorize 'if you have X dB, cut Y Hz' — you learn to recognize what sounds off and what to do about it. It's a journey. With enough practice, the suggestions become unnecessary: your ears are enough.",
+    "open_title": "Open source, for real",
+    "open_body": "The code is open. You can read it, fork it, improve it. If you can code, send a pull request. If you can master, share your use cases. If you're still learning, report what's broken. Every contribution makes the tool better for everyone.",
+    "github_cta": "View on GitHub ↗",
+    "footer": "Made for home producers · Open source · {{year}}"
+  },
+  "analyzer": {
+    "back_home": "← Home",
+    "status_done": "Analysis complete.",
+    "status_select_both": "Select two valid audio files before analyzing.",
+    "status_network_error": "Could not reach the server: {{error}}",
+    "status_unknown_error": "Unknown error",
+    "status_validation_error": "Please fill in all required fields.",
+    "status_timeout": "Timeout: the file is too large or the server is not responding",
+    "status_loading": "Analyzing...",
+    "too_many_files": "Drop 1 or 2 files",
+    "footer_note": "Files are processed in memory and deleted immediately."
+  },
+  "header": {
+    "title": "Master Assistant",
+    "subtitle": "Compare your track with a reference and get mastering suggestions ready for your DAW."
+  },
+  "upload": {
+    "aria_label": "Drop your audio files here, or click to select them",
+    "dropzone_title": "Drop your audio files here",
+    "dropzone_sub": "or click to select",
+    "dropzone_hint": "1 file → your track · 2 files → your track + reference"
+  },
+  "preview": {
+    "no_file": "No file selected",
+    "unsupported_format": "Unsupported format. Use WAV, FLAC, AIFF, MP3 or OGG.",
+    "remove": "Remove",
+    "remove_aria": "Remove file {{name}}",
+    "label_user": "Your track",
+    "label_reference": "Reference"
+  },
+  "controls": {
+    "daw_label": "DAW",
+    "daw_placeholder": "Select DAW",
+    "submit": "Analyze",
+    "submit_loading": "Analyzing..."
+  },
+  "loudness": {
+    "section_title": "Loudness summary",
+    "col_metric": "Metric",
+    "col_user": "Your track",
+    "col_reference": "Reference",
+    "col_delta": "Delta",
+    "metric_lufs": "Integrated LUFS",
+    "metric_true_peak": "True Peak (dBTP)",
+    "metric_lra": "Loudness Range (LU)"
+  },
+  "spectrum": {
+    "section_title": "Spectrum",
+    "no_data": "Spectral data unavailable.",
+    "no_imbalance": "No tonal imbalance detected.",
+    "hint": "Hover to explore · Click to pin · Esc to release",
+    "col_band": "Band (Hz)",
+    "col_user": "Your track (dB)",
+    "col_reference": "Reference (dB)",
+    "col_delta": "Delta (dB)",
+    "col_severity": "Severity",
+    "legend_user": "Your track",
+    "legend_reference": "Reference",
+    "tooltip_delta": "Delta"
+  },
+  "stereo": {
+    "section_title": "Stereo",
+    "no_stereo": "Stereo analysis unavailable (mono file).",
+    "col_metric": "Metric",
+    "col_delta": "Delta",
+    "metric_correlation": "Average correlation",
+    "metric_side_mid": "Average Side/Mid (dB)"
+  },
+  "suggestions": {
+    "section_title": "Suggestions",
+    "in_daw": "In Ableton:",
+    "priority_aria": "Priority {{priority}}, severity {{severity}}"
+  },
+  "empty_state": {
+    "title": "Great work!",
+    "body": "Your track is already close to the reference. Nothing to fix."
+  },
+  "guide": {
+    "title": "How to proceed",
+    "step1": "Apply the suggestions in priority order (P1 → P5).",
+    "step2": "After each change, re-upload the track to check the delta.",
+    "step3": "Repeat until the suggestions drop to zero."
+  },
+  "warnings": {
+    "section_title": "Warning"
+  },
+  "footer": {
+    "text": "Made for home producers · Open source · {{year}}"
+  }
+}

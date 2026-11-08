@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { cn } from "@/lib/utils";
 
 interface LoadingStatusProps {
@@ -11,10 +13,12 @@ interface LoadingStatusProps {
 
 /** Live region for progress and result/error feedback. */
 export function LoadingStatus({ loading, message, isError }: LoadingStatusProps) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <div className="space-y-2" role="status" aria-live="polite">
-        <p className="text-sm text-muted-foreground">Analisi in corso...</p>
+        <p className="text-sm text-muted-foreground">{t("analyzer.status_loading")}</p>
         <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
           <div className="h-full w-1/3 animate-pulse rounded-full bg-primary" />
         </div>
