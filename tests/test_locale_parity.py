@@ -1,10 +1,12 @@
 """Parity check between the it and en locale files."""
+
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
 LOCALES_DIR = Path(__file__).parent.parent / "frontend" / "src" / "locales"
+
 
 def _flatten(obj: dict, prefix: str = "") -> set[str]:
     keys: set[str] = set()
@@ -15,6 +17,7 @@ def _flatten(obj: dict, prefix: str = "") -> set[str]:
         else:
             keys.add(full)
     return keys
+
 
 def test_locale_files_have_identical_keys() -> None:
     it = json.loads((LOCALES_DIR / "it.json").read_text(encoding="utf-8"))
