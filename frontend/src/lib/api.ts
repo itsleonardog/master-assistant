@@ -44,6 +44,7 @@ export interface AnalyzeFilesArgs {
   userFile: File;
   referenceFile: File;
   daw: string;
+  lang: "it" | "en";
 }
 
 /**
@@ -58,6 +59,7 @@ export async function analyzeFiles({
   userFile,
   referenceFile,
   daw,
+  lang,
 }: AnalyzeFilesArgs): Promise<AnalysisResponse> {
   const controller = new AbortController();
   const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -66,6 +68,7 @@ export async function analyzeFiles({
   formData.append("user_file", userFile);
   formData.append("reference_file", referenceFile);
   formData.append("daw", daw);
+  formData.append("lang", lang);
 
   try {
     const response = await fetch("/analyze", {

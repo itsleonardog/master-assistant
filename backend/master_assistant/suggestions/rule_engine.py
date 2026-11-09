@@ -21,6 +21,7 @@ from __future__ import annotations
 
 from typing import Literal
 
+from master_assistant.i18n import Lang, t
 from master_assistant.models.schemas import (
     BandDelta,
     ComparisonReport,
@@ -42,12 +43,16 @@ LRA_MIN_LU = 3.0
 _SEVERITY_RANK: dict[str, int] = {"info": 1, "minor": 2, "major": 3, "critical": 4}
 
 
-def generate_suggestions(report: ComparisonReport) -> list[Suggestion]:
+def generate_suggestions(
+    report: ComparisonReport,
+    lang: Lang = "it",
+) -> list[Suggestion]:
     """Run every rule and return the prioritized, truncated suggestions.
 
     Args:
         report: Comparison report produced by
             :func:`master_assistant.analysis.comparison.analyze_pair`.
+        lang: Target locale for the suggestion titles and explanations.
 
     Returns:
         Up to :data:`MAX_SUGGESTIONS` suggestions ordered by ``priority``
@@ -58,12 +63,12 @@ def generate_suggestions(report: ComparisonReport) -> list[Suggestion]:
     suggestions = [
         suggestion
         for suggestion in (
-            _rule_true_peak_too_high(report),
-            _rule_loudness_mismatch(report),
-            _rule_low_mid_mud(report),
-            _rule_harshness(report),
-            _rule_bass_not_mono(report),
-            _rule_over_compressed(report),
+            _rule_true_peak_too_high(report, lang),
+            _rule_loudness_mismatch(report, lang),
+            _rule_low_mid_mud(report, lang),
+            _rule_harshness(report, lang),
+            _rule_bass_not_mono(report, lang),
+            _rule_over_compressed(report, lang),
         )
         if suggestion is not None
     ]
@@ -124,7 +129,8 @@ def _eq_cut_suggestion(
     keep_db: float,
     q: float,
     freq_range: tuple[float, float],
-    issue: str,
+    key: str,
+    lang: Lang,
 ) -> Suggestion:
     """Build an ``eq_cut`` suggestion that trims only the band excess.
 
@@ -135,7 +141,8 @@ def _eq_cut_suggestion(
         keep_db: How much of the excess to leave in place, in dB.
         q: Q factor of the suggested cut.
         freq_range: Frequency window the rule looked at, for the explanation.
-        issue: Natural-language consequence of the excess.
+        key: Message-key prefix selecting the localized title and explanation.
+        lang: Target locale.
 
     Returns:
         The populated suggestion, with a cut of ``-(normalized_delta_db - keep_db)``.
@@ -147,10 +154,18 @@ def _eq_cut_suggestion(
         priority=3,
         severity="major" if normalized_delta_db > 4.0 else "minor",
         category="eq",
-        title=f"Riduci {band.freq_hz:.0f} Hz di {abs(cut_db):.1f} dB",
-        explanation=(
-            f"Hai {normalized_delta_db:.1f} dB in più tra {low_hz:.0f}-{high_hz:.0f} Hz "
-            f"rispetto alla reference (a parità di loudness). {issue}"
+        title=t(
+            f"{key}.title",
+            lang,
+            freq=f"{band.freq_hz:.0f}",
+            gain=f"{abs(cut_db):.1f}",
+        ),
+        explanation=t(
+            f"{key}.explanation",
+            lang,
+            delta=f"{normalized_delta_db:.1f}",
+            low=f"{low_hz:.0f}",
+            high=f"{high_hz:.0f}",
         ),
         action_type="eq_cut",
         action_params={"freq_hz": band.freq_hz, "gain_db": cut_db, "q": q},
@@ -162,11 +177,12 @@ def _eq_cut_suggestion(
     )
 
 
-def _rule_loudness_mismatch(report: ComparisonReport) -> Suggestion | None:
+def _rule_loudness_mismatch(report: ComparisonReport, lang: Lang) -> Suggestion | None:
     """Suggest a gain change when the integrated loudness drifts from the reference.
 
     Args:
         report: Comparison report to inspect.
+        lang: Target locale for the suggestion strings.
 
     Returns:
         A ``gain`` suggestion when ``|integrated_lufs_delta|`` reaches
@@ -178,22 +194,19 @@ def _rule_loudness_mismatch(report: ComparisonReport) -> Suggestion | None:
 
     severity: Literal["minor", "major"] = "major" if abs(delta) >= 2.0 else "minor"
     gain_db = -delta
-    if delta < 0.0:
-        direction = "più silenzioso"
-        action = "Alza"
-    else:
-        direction = "più forte"
-        action = "Abbassa"
+    suffix = "boost" if delta < 0.0 else "cut"
 
     return Suggestion(
         id="loudness_mismatch",
         priority=2,
         severity=severity,
         category="loudness",
-        title=f"{action} il gain di {abs(gain_db):.1f} dB",
-        explanation=(
-            f"Il tuo master è {abs(delta):.1f} LUFS {direction} della reference. "
-            f"Porta il gain di {gain_db:+.1f} dB prima del limiter."
+        title=t(f"loudness_mismatch.title_{suffix}", lang, gain=f"{abs(gain_db):.1f}"),
+        explanation=t(
+            f"loudness_mismatch.explanation_{suffix}",
+            lang,
+            delta=f"{abs(delta):.1f}",
+            gain=f"{gain_db:+.1f}",
         ),
         action_type="gain",
         action_params={"gain_db": gain_db},
@@ -202,11 +215,12 @@ def _rule_loudness_mismatch(report: ComparisonReport) -> Suggestion | None:
     )
 
 
-def _rule_true_peak_too_high(report: ComparisonReport) -> Suggestion | None:
+def _rule_true_peak_too_high(report: ComparisonReport, lang: Lang) -> Suggestion | None:
     """Suggest a limiter ceiling when the true peak exceeds the safe ceiling.
 
     Args:
         report: Comparison report to inspect.
+        lang: Target locale for the suggestion strings.
 
     Returns:
         A ``critical`` limiter suggestion when ``true_peak_dbtp`` is above
@@ -222,11 +236,16 @@ def _rule_true_peak_too_high(report: ComparisonReport) -> Suggestion | None:
         priority=1,
         severity="critical",
         category="peak",
-        title=f"Limita il true peak a {TRUE_PEAK_CEILING_DBTP:.0f} dBTP",
-        explanation=(
-            f"Il true peak è a {true_peak_dbtp:+.1f} dBTP. "
-            f"Abbassa il ceiling a {TRUE_PEAK_CEILING_DBTP:.0f} dBTP per evitare "
-            "clipping su encoding lossy (MP3, AAC, Spotify, YouTube)."
+        title=t(
+            "true_peak_too_high.title",
+            lang,
+            ceiling=f"{TRUE_PEAK_CEILING_DBTP:.0f}",
+        ),
+        explanation=t(
+            "true_peak_too_high.explanation",
+            lang,
+            tp=f"{true_peak_dbtp:+.1f}",
+            ceiling=f"{TRUE_PEAK_CEILING_DBTP:.0f}",
         ),
         action_type="limiter",
         action_params={
@@ -238,11 +257,12 @@ def _rule_true_peak_too_high(report: ComparisonReport) -> Suggestion | None:
     )
 
 
-def _rule_low_mid_mud(report: ComparisonReport) -> Suggestion | None:
+def _rule_low_mid_mud(report: ComparisonReport, lang: Lang) -> Suggestion | None:
     """Suggest a cut when 200-500 Hz is tonally too loud.
 
     Args:
         report: Comparison report to inspect.
+        lang: Target locale for the suggestion strings.
 
     Returns:
         An ``eq_cut`` suggestion when the loudest normalized band between
@@ -263,15 +283,17 @@ def _rule_low_mid_mud(report: ComparisonReport) -> Suggestion | None:
         keep_db=1.0,
         q=1.2,
         freq_range=LOW_MID_RANGE_HZ,
-        issue="È la zona che rende il mix 'impastato'.",
+        key="low_mid_mud",
+        lang=lang,
     )
 
 
-def _rule_harshness(report: ComparisonReport) -> Suggestion | None:
+def _rule_harshness(report: ComparisonReport, lang: Lang) -> Suggestion | None:
     """Suggest a cut when 2-5 kHz is tonally too loud.
 
     Args:
         report: Comparison report to inspect.
+        lang: Target locale for the suggestion strings.
 
     Returns:
         An ``eq_cut`` suggestion when the loudest normalized band between
@@ -292,15 +314,17 @@ def _rule_harshness(report: ComparisonReport) -> Suggestion | None:
         keep_db=1.5,
         q=1.0,
         freq_range=HARSH_RANGE_HZ,
-        issue="È la zona che rende il mix 'aspro' e faticoso da ascoltare.",
+        key="harshness",
+        lang=lang,
     )
 
 
-def _rule_bass_not_mono(report: ComparisonReport) -> Suggestion | None:
+def _rule_bass_not_mono(report: ComparisonReport, lang: Lang) -> Suggestion | None:
     """Suggest narrowing the bass when its correlation is too low.
 
     Args:
         report: Comparison report to inspect.
+        lang: Target locale for the suggestion strings.
 
     Returns:
         A ``stereo_narrow`` suggestion when the mean correlation below
@@ -333,11 +357,12 @@ def _rule_bass_not_mono(report: ComparisonReport) -> Suggestion | None:
         priority=4,
         severity=severity,
         category="stereo",
-        title=f"Restringi il basso a mono sotto {BASS_MAX_HZ:.0f} Hz",
-        explanation=(
-            f"Sotto {BASS_MAX_HZ:.0f} Hz la correlazione media è {mean_correlation:.2f}: "
-            "il basso è troppo largo e rischia di perdere energia in mono "
-            "(club, telefoni, vinyl)."
+        title=t("bass_not_mono.title", lang, max=f"{BASS_MAX_HZ:.0f}"),
+        explanation=t(
+            "bass_not_mono.explanation",
+            lang,
+            max=f"{BASS_MAX_HZ:.0f}",
+            corr=f"{mean_correlation:.2f}",
         ),
         action_type="stereo_narrow",
         action_params={"below_hz": BASS_MAX_HZ},
@@ -346,11 +371,12 @@ def _rule_bass_not_mono(report: ComparisonReport) -> Suggestion | None:
     )
 
 
-def _rule_over_compressed(report: ComparisonReport) -> Suggestion | None:
+def _rule_over_compressed(report: ComparisonReport, lang: Lang) -> Suggestion | None:
     """Suggest recovering dynamics when the loudness range is too small.
 
     Args:
         report: Comparison report to inspect.
+        lang: Target locale for the suggestion strings.
 
     Returns:
         A ``compressor`` suggestion when the user loudness range is under
@@ -367,10 +393,11 @@ def _rule_over_compressed(report: ComparisonReport) -> Suggestion | None:
         priority=5,
         severity=severity,
         category="dynamics",
-        title=f"Aumenta la dinamica (LRA {loudness_range_lu:.1f} LU)",
-        explanation=(
-            f"La loudness range è {loudness_range_lu:.1f} LU: il master è molto compresso. "
-            "Considera di ridurre la compressione nel mix per recuperare dinamica."
+        title=t("over_compressed.title", lang, lra=f"{loudness_range_lu:.1f}"),
+        explanation=t(
+            "over_compressed.explanation",
+            lang,
+            lra=f"{loudness_range_lu:.1f}",
         ),
         action_type="compressor",
         action_params={"target_lra_lu": 4.0},

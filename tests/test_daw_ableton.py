@@ -207,3 +207,33 @@ def test_unknown_action_type_error_names_the_type(adapter: AbletonAdapter) -> No
     """The error message includes the offending action type for debugging."""
     with pytest.raises(ValueError, match="reverse_polarity"):
         adapter.render(_suggestion("reverse_polarity"))
+
+
+# --- Localization -----------------------------------------------------------
+
+
+def test_gain_renders_in_english_when_lang_en(adapter: AbletonAdapter) -> None:
+    """A gain instruction must switch to English when lang is "en"."""
+    text = adapter.render(_suggestion("gain", gain_db=-2.0), lang="en")
+
+    assert "before the limiter" in text
+    assert "prima del limiter" not in text
+
+
+def test_limiter_renders_in_english_when_lang_en(adapter: AbletonAdapter) -> None:
+    """A limiter instruction must switch to English when lang is "en"."""
+    text = adapter.render(
+        _suggestion("limiter", ceiling_dbtp=-1.0, reduction_needed_db=2.0),
+        lang="en",
+    )
+
+    assert "Required reduction" in text
+    assert "Riduzione necessaria" not in text
+
+
+def test_compressor_renders_in_english_when_lang_en(adapter: AbletonAdapter) -> None:
+    """A compressor instruction must switch to English when lang is "en"."""
+    text = adapter.render(_suggestion("compressor", target_lra_lu=4.0), lang="en")
+
+    assert "mix-level fix" in text
+    assert "intervento sul mix" not in text

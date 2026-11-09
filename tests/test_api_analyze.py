@@ -21,13 +21,20 @@ from master_assistant.api.main import app
 DURATION_S = 6.0
 
 
-def _post_analyze(user: bytes | None, reference: bytes | None, daw: str = "ableton") -> Response:
+def _post_analyze(
+    user: bytes | None,
+    reference: bytes | None,
+    daw: str = "ableton",
+    lang: str | None = None,
+) -> Response:
     """Post a multipart analysis request, omitting the files that are ``None``.
 
     Args:
         user: Raw WAV bytes of the unmastered track, or ``None`` to omit it.
         reference: Raw WAV bytes of the reference master, or ``None`` to omit it.
         daw: Target DAW identifier.
+        lang: Optional target language; omitted when ``None`` so the endpoint
+            default applies.
 
     Returns:
         The HTTP response returned by the endpoint.
@@ -38,10 +45,14 @@ def _post_analyze(user: bytes | None, reference: bytes | None, daw: str = "ablet
     if reference is not None:
         files["reference_file"] = ("reference.wav", reference, "audio/wav")
 
+    data: dict[str, str] = {"daw": daw}
+    if lang is not None:
+        data["lang"] = lang
+
     with TestClient(app) as client:
         if files:
-            return client.post("/analyze", files=files, data={"daw": daw})
-        return client.post("/analyze", data={"daw": daw})
+            return client.post("/analyze", files=files, data=data)
+        return client.post("/analyze", data=data)
 
 
 def test_identical_files_return_no_suggestions() -> None:
@@ -185,3 +196,35 @@ def test_oversized_upload_returns_413(monkeypatch: pytest.MonkeyPatch) -> None:
 
     assert response.status_code == 413
     assert "File too large" in response.json()["detail"]
+
+
+def test_analyze_with_lang_en_returns_english_suggestions() -> None:
+    """A lang=en request must return English suggestions and Ableton texts."""
+    reference = _stereo_noise(DURATION_S, seed=11)
+
+    response = _post_analyze(
+        _wav_bytes(reference * 10.0 ** (6.0 / 20.0)),
+        _wav_bytes(reference),
+        lang="en",
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    gain_titles = [
+        suggestion["title"]
+        for suggestion in payload["suggestions"]
+        if suggestion["action_type"] == "gain"
+    ]
+    assert gain_titles
+    assert any("Lower gain" in title for title in gain_titles)
+    assert any("before the limiter" in text for text in payload["rendered_suggestions"])
+    assert all("prima del limiter" not in text for text in payload["rendered_suggestions"])
+
+
+def test_unsupported_lang_returns_422() -> None:
+    """A lang outside the Literal must be rejected by FastAPI validation."""
+    audio = _wav_bytes(_stereo_noise(DURATION_S, seed=12))
+
+    response = _post_analyze(audio, audio, lang="fr")
+
+    assert response.status_code == 422

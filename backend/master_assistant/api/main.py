@@ -12,7 +12,7 @@ from __future__ import annotations
 import tempfile
 import warnings
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.staticfiles import StaticFiles
@@ -44,6 +44,7 @@ async def analyze(
     user_file: Annotated[UploadFile, File(description="Traccia non masterizzata")],
     reference_file: Annotated[UploadFile, File(description="Traccia di riferimento")],
     daw: Annotated[str, Form(description="DAW di destinazione")] = "ableton",
+    lang: Annotated[Literal["it", "en"], Form(description="Target language")] = "it",
 ) -> AnalysisResponse:
     """Analyze an unmastered upload against a reference master.
 
@@ -55,6 +56,7 @@ async def analyze(
         user_file: Multipart upload of the unmastered track.
         reference_file: Multipart upload of the reference master.
         daw: Target DAW identifier; only ``"ableton"`` is supported.
+        lang: Target locale for suggestions and rendered instructions.
 
     Returns:
         AnalysisResponse with the comparison report, the DAW-agnostic
@@ -75,11 +77,13 @@ async def analyze(
         temp_paths.append(reference_path)
 
         report = analyze_pair(user_path, reference_path)
-        suggestions = generate_suggestions(report)
+        suggestions = generate_suggestions(report, lang=lang)
         return AnalysisResponse(
             report=report,
             suggestions=suggestions,
-            rendered_suggestions=[adapter.render(suggestion) for suggestion in suggestions],
+            rendered_suggestions=[
+                adapter.render(suggestion, lang=lang) for suggestion in suggestions
+            ],
             daw=daw,
         )
     except AudioReadError as exc:

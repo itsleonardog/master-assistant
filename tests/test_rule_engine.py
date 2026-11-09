@@ -413,3 +413,60 @@ def test_mono_report_never_triggers_bass_rule() -> None:
     assert suggestions
     assert all(suggestion.id != "bass_not_mono" for suggestion in suggestions)
     assert [suggestion.priority for suggestion in suggestions] == [1, 2, 5]
+
+
+# --- Localization -----------------------------------------------------------
+
+
+def test_suggestions_are_localized_in_english() -> None:
+    """The loudness rule must render in English when lang is "en"."""
+    suggestions = generate_suggestions(_make_report(integrated_lufs_delta=-3.2), lang="en")
+
+    assert len(suggestions) == 1
+    assert "Raise gain" in suggestions[0].title
+    assert "LUFS quieter" in suggestions[0].explanation
+
+
+def test_true_peak_rule_is_localized_in_english() -> None:
+    """The true peak rule must render in English when lang is "en"."""
+    suggestions = generate_suggestions(_make_report(user_true_peak_dbtp=0.5), lang="en")
+
+    assert len(suggestions) == 1
+    assert "Limit true peak to -1 dBTP" in suggestions[0].title
+    assert "True peak is at +0.5 dBTP" in suggestions[0].explanation
+
+
+def test_low_mid_rule_is_localized_in_english() -> None:
+    """The low-mid rule must render in English when lang is "en"."""
+    suggestions = generate_suggestions(_make_report(bands=[(315.0, 3.0)]), lang="en")
+
+    assert len(suggestions) == 1
+    assert "Cut 315 Hz by 2.0 dB" in suggestions[0].title
+    assert "sound muddy" in suggestions[0].explanation
+
+
+def test_harshness_rule_is_localized_in_english() -> None:
+    """The harshness rule must render in English when lang is "en"."""
+    suggestions = generate_suggestions(_make_report(bands=[(3150.0, 4.0)]), lang="en")
+
+    assert len(suggestions) == 1
+    assert "Cut 3150 Hz by 2.5 dB" in suggestions[0].title
+    assert "harsh and fatiguing" in suggestions[0].explanation
+
+
+def test_bass_rule_is_localized_in_english() -> None:
+    """The bass-mono rule must render in English when lang is "en"."""
+    suggestions = generate_suggestions(_make_report(stereo_bass_correlation=0.4), lang="en")
+
+    assert len(suggestions) == 1
+    assert "Narrow the bass to mono below 120 Hz" in suggestions[0].title
+    assert "average correlation is 0.40" in suggestions[0].explanation
+
+
+def test_over_compressed_rule_is_localized_in_english() -> None:
+    """The over-compression rule must render in English when lang is "en"."""
+    suggestions = generate_suggestions(_make_report(user_lra_lu=2.0), lang="en")
+
+    assert len(suggestions) == 1
+    assert "Increase dynamics (LRA 2.0 LU)" in suggestions[0].title
+    assert "heavily compressed" in suggestions[0].explanation

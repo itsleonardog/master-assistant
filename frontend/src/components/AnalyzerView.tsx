@@ -16,6 +16,7 @@ import { SuggestionsSection } from "@/components/SuggestionsSection";
 import { UploadZone } from "@/components/UploadZone";
 import { WarningsSection } from "@/components/WarningsSection";
 import { useAudioDuration } from "@/hooks/useAudioDuration";
+import i18n from "@/i18n";
 import { ApiError, analyzeFiles } from "@/lib/api";
 import { isAudioFile } from "@/lib/format";
 import type { AnalysisResponse } from "@/types";
@@ -114,7 +115,12 @@ export function AnalyzerView({ onBack }: AnalyzerViewProps) {
     setStatus(EMPTY_STATUS);
 
     try {
-      const payload = await analyzeFiles({ userFile, referenceFile, daw });
+      const payload = await analyzeFiles({
+        userFile,
+        referenceFile,
+        daw,
+        lang: i18n.language === "en" ? "en" : "it",
+      });
       setResult(payload);
       setStatus({ message: t("analyzer.status_done"), isError: false });
     } catch (error) {
