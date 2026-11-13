@@ -7,12 +7,12 @@ export function GuideBox() {
   const { t } = useTranslation();
 
   return (
-    <Card className="border-primary/20 bg-primary/5">
+    <Card className="border-l-4 border-vermilion bg-vermilion-soft">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">{t("guide.title")}</CardTitle>
+        <CardTitle className="font-display text-base text-sumi">{t("guide.title")}</CardTitle>
       </CardHeader>
       <CardContent>
-        <ol className="list-inside list-decimal space-y-1 text-sm text-muted-foreground">
+        <ol className="list-inside list-decimal space-y-1 font-body text-sm text-sumi">
           <li>{t("guide.step1")}</li>
           <li>{t("guide.step2")}</li>
           <li>{t("guide.step3")}</li>

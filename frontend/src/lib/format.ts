@@ -23,11 +23,11 @@ export const ACCEPTED_EXTENSIONS = [".wav", ".flac", ".aiff", ".aif", ".mp3", ".
 export const EM_DASH = "\u2014";
 
 /** Classes applied to an "aligned" value. */
-const COLOR_OK = "text-emerald-600 dark:text-emerald-400";
+const COLOR_OK = "text-sage";
 /** Classes applied to a value that is close but not aligned. */
-const COLOR_WARN = "text-amber-600 dark:text-amber-400";
+const COLOR_WARN = "text-amber";
 /** Classes applied to a value that exceeds its threshold. */
-const COLOR_BAD = "text-red-600 dark:text-red-400";
+const COLOR_BAD = "text-vermilion";
 
 /**
  * Format a number with a fixed number of decimals.

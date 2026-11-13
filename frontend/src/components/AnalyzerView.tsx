@@ -133,7 +133,7 @@ export function AnalyzerView({ onBack }: AnalyzerViewProps) {
   const hasAnyFile = !!(userFile || referenceFile);
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-12">
+    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-6 bg-washi px-4 py-8 sm:px-6 sm:py-12">
       <div className="mb-4 flex items-center justify-between gap-4">
         <button
           type="button"

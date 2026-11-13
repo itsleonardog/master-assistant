@@ -26,7 +26,7 @@ export function SuggestionsSection({ suggestions, rendered }: SuggestionsSection
 
   return (
     <section className="space-y-3">
-      <h3 className="text-lg font-semibold">{t("suggestions.section_title")}</h3>
+      <h3 className="font-display text-lg font-semibold">{t("suggestions.section_title")}</h3>
       <div className="space-y-3">
         {ordered.map((entry) => (
           <SuggestionCard

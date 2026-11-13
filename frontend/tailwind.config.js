@@ -45,8 +45,8 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* Landing page reskin only: washi paper, sumi ink, vermilion seal.
-           Fixed hex values on purpose, so the analyzer keeps the Zinc tokens. */
+        /* Washi paper, sumi ink, vermilion seal. Fixed hex values, used as
+           explicit overrides on top of the Shadcn CSS variable tokens. */
         washi: {
           DEFAULT: "#fef9f2",
           low: "#f8f3ec",
@@ -63,6 +63,13 @@ export default {
           DEFAULT: "#b72312",
           bright: "#fe563f",
           soft: "#ffdad4",
+        },
+        /* Semantic status colours for the analyzer deltas and badges. */
+        sage: {
+          DEFAULT: "#6b7a6a",
+        },
+        amber: {
+          DEFAULT: "#a86b1f",
         },
       },
       fontFamily: {

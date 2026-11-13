@@ -16,14 +16,14 @@ export function WarningsSection({ warnings }: WarningsSectionProps) {
   }
 
   return (
-    <Card className="border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30">
+    <Card className="border-sumi-hairline">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg text-amber-900 dark:text-amber-100">
+        <CardTitle className="font-display text-lg text-sumi">
           {t("warnings.section_title")}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ul className="list-inside list-disc space-y-1 text-sm text-amber-900 dark:text-amber-100">
+        <ul className="list-inside list-disc space-y-1 font-body text-sm text-sumi-soft">
           {warnings.map((warning) => (
             <li key={warning}>{warning}</li>
           ))}

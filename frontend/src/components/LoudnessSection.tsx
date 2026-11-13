@@ -62,33 +62,41 @@ export function LoudnessSection({ report }: LoudnessSectionProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">{t("loudness.section_title")}</CardTitle>
+        <CardTitle className="font-display text-lg">{t("loudness.section_title")}</CardTitle>
       </CardHeader>
       <CardContent className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t("loudness.col_metric")}</TableHead>
-              <TableHead className="text-right">{t("loudness.col_user")}</TableHead>
-              <TableHead className="text-right">{t("loudness.col_reference")}</TableHead>
-              <TableHead className="text-right">{t("loudness.col_delta")}</TableHead>
+              <TableHead className="font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                {t("loudness.col_metric")}
+              </TableHead>
+              <TableHead className="text-right font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                {t("loudness.col_user")}
+              </TableHead>
+              <TableHead className="text-right font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                {t("loudness.col_reference")}
+              </TableHead>
+              <TableHead className="text-right font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                {t("loudness.col_delta")}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rows.map((row) => (
               <TableRow key={row.label}>
-                <TableHead scope="row" className="font-medium">
+                <TableHead scope="row" className="font-body font-medium">
                   {row.label}
                 </TableHead>
-                <TableCell className="text-right tabular-nums">
+                <TableCell className="text-right font-mono tabular-nums">
                   {formatNumber(row.user, 1)}
                 </TableCell>
-                <TableCell className="text-right tabular-nums">
+                <TableCell className="text-right font-mono tabular-nums">
                   {formatNumber(row.reference, 1)}
                 </TableCell>
                 <TableCell
                   className={cn(
-                    "text-right font-medium tabular-nums",
+                    "text-right font-mono font-medium tabular-nums",
                     deltaColorClass(row.delta, row.threshold),
                   )}
                 >

@@ -6,8 +6,10 @@ export function Header() {
 
   return (
     <header className="space-y-2 text-center sm:text-left">
-      <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{t("header.title")}</h1>
-      <p className="text-sm text-muted-foreground sm:text-base">{t("header.subtitle")}</p>
+      <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+        {t("header.title")}
+      </h1>
+      <p className="font-body text-sm text-sumi-soft sm:text-base">{t("header.subtitle")}</p>
     </header>
   );
 }

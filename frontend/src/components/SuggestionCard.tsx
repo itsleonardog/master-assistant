@@ -6,10 +6,10 @@ import type { Suggestion, SuggestionSeverity } from "@/types";
 
 /** Circular priority badge colours per severity. */
 const SEVERITY_CLASSES: Record<SuggestionSeverity, string> = {
-  critical: "bg-red-600 text-white",
-  major: "bg-orange-500 text-white",
-  minor: "bg-yellow-400 text-yellow-950",
-  info: "bg-zinc-400 text-white",
+  critical: "bg-vermilion text-washi",
+  major: "bg-amber text-washi",
+  minor: "bg-sage text-washi",
+  info: "bg-sumi-outline text-washi",
 };
 
 interface SuggestionCardProps {
@@ -32,7 +32,7 @@ export function SuggestionCard({ suggestion, rendered }: SuggestionCardProps) {
             severity,
           })}
           className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-mono text-sm font-semibold",
             SEVERITY_CLASSES[severity],
           )}
         >
@@ -40,16 +40,18 @@ export function SuggestionCard({ suggestion, rendered }: SuggestionCardProps) {
         </div>
 
         <div className="min-w-0 flex-1 space-y-2">
-          <h4 className="text-base font-semibold leading-tight">{suggestion.title}</h4>
+          <h4 className="font-body text-base font-semibold leading-tight">{suggestion.title}</h4>
 
-          <div className="rounded-md bg-muted px-3 py-2">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <div className="rounded-md bg-washi-container px-3 py-2">
+            <span className="font-mono text-xs font-medium uppercase tracking-wide text-sumi-outline">
               {t("suggestions.in_daw")}
             </span>
-            <p className="mt-1 break-words font-mono text-sm">{rendered || "\u2014"}</p>
+            <p className="mt-1 break-words font-mono text-sm text-sumi">
+              {rendered || "\u2014"}
+            </p>
           </div>
 
-          <p className="text-xs text-muted-foreground">{suggestion.explanation}</p>
+          <p className="font-body text-xs text-sumi-soft">{suggestion.explanation}</p>
         </div>
       </CardContent>
     </Card>

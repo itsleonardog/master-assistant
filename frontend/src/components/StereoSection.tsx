@@ -24,34 +24,38 @@ export function StereoSection({ stereo }: StereoSectionProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">{t("stereo.section_title")}</CardTitle>
+        <CardTitle className="font-display text-lg">{t("stereo.section_title")}</CardTitle>
       </CardHeader>
       <CardContent>
         {!stereo ? (
-          <p className="text-sm text-muted-foreground">{t("stereo.no_stereo")}</p>
+          <p className="font-body text-sm text-sumi-soft">{t("stereo.no_stereo")}</p>
         ) : (
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t("stereo.col_metric")}</TableHead>
-                  <TableHead className="text-right">{t("stereo.col_delta")}</TableHead>
+                  <TableHead className="font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                    {t("stereo.col_metric")}
+                  </TableHead>
+                  <TableHead className="text-right font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                    {t("stereo.col_delta")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow>
-                  <TableHead scope="row" className="font-medium">
+                  <TableHead scope="row" className="font-body font-medium">
                     {t("stereo.metric_correlation")}
                   </TableHead>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="text-right font-mono tabular-nums">
                     {formatNumber(stereo.overall_correlation_delta, 2)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableHead scope="row" className="font-medium">
+                  <TableHead scope="row" className="font-body font-medium">
                     {t("stereo.metric_side_mid")}
                   </TableHead>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="text-right font-mono tabular-nums">
                     {formatNumber(stereo.overall_side_to_mid_delta_db, 1)}
                   </TableCell>
                 </TableRow>

@@ -74,14 +74,14 @@ export function UploadZone({ onFilesSelected }: UploadZoneProps) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={cn(
-        "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/20 px-6 py-12 text-center transition-colors",
-        "hover:border-primary/40 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        dragOver && "border-primary bg-primary/5",
+        "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-sumi-hairline bg-muted/20 px-6 py-12 text-center transition-colors",
+        "hover:border-vermilion hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        dragOver && "border-vermilion bg-vermilion-soft/40",
       )}
     >
-      <p className="text-base font-medium">{t("upload.dropzone_title")}</p>
-      <p className="text-sm text-muted-foreground">{t("upload.dropzone_sub")}</p>
-      <p className="text-xs text-muted-foreground">{t("upload.dropzone_hint")}</p>
+      <p className="font-display text-xl">{t("upload.dropzone_title")}</p>
+      <p className="font-body text-sm text-sumi-soft">{t("upload.dropzone_sub")}</p>
+      <p className="font-mono text-xs text-sumi-outline">{t("upload.dropzone_hint")}</p>
       <input
         ref={inputRef}
         type="file"

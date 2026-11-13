@@ -26,9 +26,10 @@ const CHART_FLOOR_DB = -60;
 /** Frequencies that receive an explicit X-axis tick. */
 const TICK_FREQUENCIES_HZ = [100, 1000, 10000] as const;
 
-/** Line colours; reused by the highlighted dots so fill and stroke match. */
-const CHART_USER_COLOR = "hsl(var(--chart-user))";
-const CHART_REFERENCE_COLOR = "hsl(var(--chart-reference))";
+/** Line colours; the highlighted dots use the vermilion accent instead. */
+const CHART_USER_COLOR = "#1c1b19"; // sumi, primary series
+const CHART_REFERENCE_COLOR = "#7a776f"; // sumi-outline, dashed series
+const CHART_HIGHLIGHT_COLOR = "#b72312"; // vermilion, highlighted band
 
 /** Radius of the dot drawn on the highlighted band. */
 const HIGHLIGHT_DOT_RADIUS = 6;
@@ -89,12 +90,12 @@ function createHighlightDot(highlightedIndex: number, color: string) {
 /** Text colour matching a band severity. */
 function severityTextClass(severity: BandDelta["severity"]): string {
   if (severity === "major") {
-    return "text-red-600 dark:text-red-400";
+    return "text-vermilion";
   }
   if (severity === "minor") {
-    return "text-amber-600 dark:text-amber-400";
+    return "text-amber";
   }
-  return "text-emerald-600 dark:text-emerald-400";
+  return "text-sage";
 }
 
 interface HighlightedBandTooltipProps {
@@ -113,17 +114,17 @@ function HighlightedBandTooltip({ band, active }: HighlightedBandTooltipProps) {
   }
 
   return (
-    <div className="grid gap-1 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-      <span className="font-medium">{formatFrequencyTick(band.freq_hz)} Hz</span>
-      <span className="flex items-center justify-between gap-4 text-muted-foreground">
+    <div className="grid gap-1 rounded border border-sumi-hairline bg-washi-container px-2.5 py-1.5 text-xs text-sumi shadow-xl">
+      <span className="font-mono font-medium">{formatFrequencyTick(band.freq_hz)} Hz</span>
+      <span className="flex items-center justify-between gap-4 text-sumi-soft">
         {t("spectrum.legend_user")}
-        <span className="font-mono font-medium tabular-nums text-foreground">
+        <span className="font-mono font-medium tabular-nums text-sumi">
           {band.user_db.toFixed(1)} dB
         </span>
       </span>
-      <span className="flex items-center justify-between gap-4 text-muted-foreground">
+      <span className="flex items-center justify-between gap-4 text-sumi-soft">
         {t("spectrum.legend_reference")}
-        <span className="font-mono font-medium tabular-nums text-foreground">
+        <span className="font-mono font-medium tabular-nums text-sumi">
           {band.reference_db.toFixed(1)} dB
         </span>
       </span>
@@ -211,8 +212,8 @@ export function SpectrumChart({
       : bands.findIndex((band) => band.freq_hz === highlightedFreqHz);
   const highlighted = highlightedIndex >= 0 ? bands[highlightedIndex] : undefined;
 
-  const referenceDot = createHighlightDot(highlightedIndex, CHART_REFERENCE_COLOR);
-  const userDot = createHighlightDot(highlightedIndex, CHART_USER_COLOR);
+  const referenceDot = createHighlightDot(highlightedIndex, CHART_HIGHLIGHT_COLOR);
+  const userDot = createHighlightDot(highlightedIndex, CHART_HIGHLIGHT_COLOR);
 
   return (
     <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full">
@@ -237,13 +238,13 @@ export function SpectrumChart({
           axisLine
           tickFormatter={(value: number) => `${Math.round(value)} dB`}
         />
-        <ChartLegend content={<ChartLegendContent />} />
+        <ChartLegend content={<ChartLegendContent className="font-mono text-xs" />} />
         {highlighted && (
           <ReferenceLine
             x={highlightedIndex}
-            stroke="hsl(var(--foreground))"
+            stroke={CHART_HIGHLIGHT_COLOR}
             strokeDasharray="4 4"
-            strokeOpacity={isPinned ? 0.8 : 0.4}
+            strokeOpacity={0.6}
             strokeWidth={isPinned ? 1.5 : 1}
             ifOverflow="extendDomain"
           />

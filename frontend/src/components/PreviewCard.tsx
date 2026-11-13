@@ -42,11 +42,7 @@ export function PreviewCard({ label, file, duration, onRemove }: PreviewCardProp
   const durationText = valid ? formatDuration(duration) : "\u2014";
 
   return (
-    <Card
-      className={cn(
-        valid ? "border-border" : "border-red-500/70 bg-red-50/50 dark:bg-red-950/20",
-      )}
-    >
+    <Card className={cn(valid ? "border-sage" : "border-vermilion bg-vermilion-soft/30")}>
       <CardContent className="p-4">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
 
@@ -54,27 +50,23 @@ export function PreviewCard({ label, file, duration, onRemove }: PreviewCardProp
           <span
             aria-hidden="true"
             className={cn(
-              "text-base leading-none",
-              valid
-                ? "text-emerald-600 dark:text-emerald-400"
-                : "text-red-600 dark:text-red-400",
+              "inline-flex h-5 w-5 items-center justify-center rounded-full text-xs leading-none",
+              valid ? "bg-sage text-washi" : "bg-vermilion text-washi",
             )}
           >
             {valid ? "\u2713" : "\u2717"}
           </span>
-          <span className="truncate" title={file.name}>
+          <span className="truncate font-mono" title={file.name}>
             {file.name}
           </span>
         </p>
 
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-1 font-mono text-xs text-sumi-outline">
           {formatBytes(file.size)} · {durationText}
         </p>
 
         {!valid && (
-          <p className="mt-2 text-xs text-red-600 dark:text-red-400">
-            {t("preview.unsupported_format")}
-          </p>
+          <p className="mt-2 text-xs text-vermilion">{t("preview.unsupported_format")}</p>
         )}
 
         <Button

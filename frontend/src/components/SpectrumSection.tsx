@@ -94,11 +94,11 @@ export function SpectrumSection({ bands }: SpectrumSectionProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">{t("spectrum.section_title")}</CardTitle>
+        <CardTitle className="font-display text-lg">{t("spectrum.section_title")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {bands.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("spectrum.no_data")}</p>
+          <p className="font-body text-sm text-sumi-soft">{t("spectrum.no_data")}</p>
         ) : (
           <div data-spectrum-scope="chart">
             <SpectrumChart
@@ -110,21 +110,31 @@ export function SpectrumSection({ bands }: SpectrumSectionProps) {
         )}
 
         {problems.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("spectrum.no_imbalance")}</p>
+          <p className="font-body text-sm text-sumi-soft">{t("spectrum.no_imbalance")}</p>
         ) : (
           <div className="space-y-2">
-            <p className="text-right text-xs text-muted-foreground">
+            <p className="font-mono text-right text-xs text-sumi-outline">
               {t("spectrum.hint")}
             </p>
             <div className="overflow-x-auto" data-spectrum-scope="table">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t("spectrum.col_band")}</TableHead>
-                    <TableHead className="text-right">{t("spectrum.col_user")}</TableHead>
-                    <TableHead className="text-right">{t("spectrum.col_reference")}</TableHead>
-                    <TableHead className="text-right">{t("spectrum.col_delta")}</TableHead>
-                    <TableHead>{t("spectrum.col_severity")}</TableHead>
+                    <TableHead className="font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                      {t("spectrum.col_band")}
+                    </TableHead>
+                    <TableHead className="text-right font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                      {t("spectrum.col_user")}
+                    </TableHead>
+                    <TableHead className="text-right font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                      {t("spectrum.col_reference")}
+                    </TableHead>
+                    <TableHead className="text-right font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                      {t("spectrum.col_delta")}
+                    </TableHead>
+                    <TableHead className="font-mono text-[10px] uppercase tracking-wider text-sumi-outline">
+                      {t("spectrum.col_severity")}
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -146,24 +156,24 @@ export function SpectrumSection({ bands }: SpectrumSectionProps) {
                         }
                       }}
                     >
-                      <TableCell className="tabular-nums">{formatNumber(band.freq_hz, 0)}</TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      <TableCell className="font-mono tabular-nums">
+                        {formatNumber(band.freq_hz, 0)}
+                      </TableCell>
+                      <TableCell className="text-right font-mono tabular-nums">
                         {formatNumber(band.user_db, 1)}
                       </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      <TableCell className="text-right font-mono tabular-nums">
                         {formatNumber(band.reference_db, 1)}
                       </TableCell>
                       <TableCell
                         className={cn(
-                          "text-right font-medium tabular-nums",
-                          band.severity === "major"
-                            ? "text-red-600 dark:text-red-400"
-                            : "text-amber-600 dark:text-amber-400",
+                          "text-right font-mono font-medium tabular-nums",
+                          band.severity === "major" ? "text-vermilion" : "text-amber",
                         )}
                       >
                         {formatNumber(band.delta_db, 1)}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">{band.severity}</TableCell>
+                      <TableCell className="font-body text-sumi-soft">{band.severity}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

@@ -3,42 +3,44 @@
 @tailwind utilities;
 
 @layer base {
+  /* Washi theme applied globally. Landing uses explicit bg-sumi etc.
+     overrides on top; analyzer relies on these tokens. */
   :root {
-    /* Neutral (Zinc) palette, light theme. Values are HSL triplets consumed by
-       the Tailwind theme extension in tailwind.config.js. */
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    /* Washi paper, sumi ink, vermilion seal. Values are HSL triplets consumed
+       by the Tailwind theme extension in tailwind.config.js. */
+    --background: 35 90% 97%;
+    --foreground: 30 5% 10%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card: 35 100% 99%;
+    --card-foreground: 30 5% 10%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover: 35 100% 99%;
+    --popover-foreground: 30 5% 10%;
 
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 30 5% 10%;
+    --primary-foreground: 35 90% 97%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 36 39% 95%;
+    --secondary-foreground: 30 5% 10%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 36 32% 92%;
+    --muted-foreground: 38 6% 27%;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 36 32% 92%;
+    --accent-foreground: 30 5% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 8 80% 39%;
+    --destructive-foreground: 35 90% 97%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 36 15% 77%;
+    --input: 36 15% 77%;
+    --ring: 30 5% 10%;
 
-    --radius: 0.5rem;
+    --radius: 0.25rem;
 
-    /* Chart series colours: user track in blue, reference in grey. */
-    --chart-user: 221 83% 53%;
-    --chart-reference: 220 9% 46%;
+    /* Chart series colours: user track in sumi, reference in sumi-outline. */
+    --chart-user: 30 5% 10%;
+    --chart-reference: 44 5% 46%;
   }
 
   .dark {
@@ -80,8 +82,8 @@
   }
 }
 
-/* Landing page reskin utilities. Scoped to the landing markup only: the
-   analyzer keeps the Zinc tokens defined above. */
+/* Washi reskin utilities. Applied explicitly in the landing markup; the
+   analyzer inherits the same palette through the CSS variable tokens above. */
 .washi-grain {
   background-color: #fef9f2;
   background-image: radial-gradient(rgba(28, 27, 25, 0.03) 1px, transparent 0);
