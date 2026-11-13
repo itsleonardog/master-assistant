@@ -28,7 +28,12 @@
     "open_title": "Open source, per davvero",
     "open_body": "Il codice è aperto. Puoi leggerlo, forkarlo, migliorarlo. Se sai programmare, proponi una pull request. Se sai masterizzare, condividi i tuoi casi d'uso. Se stai imparando, segnala cosa non funziona. Ogni contributo rende lo strumento migliore per tutti.",
     "github_cta": "Vedi su GitHub ↗",
-    "footer": "Fatto per home producer · Open source · {{year}}"
+    "footer": "Fatto per home producer · Open source · {{year}}",
+    "hero_marker_edu": "EDU · NON-COMMERCIALE",
+    "hero_marker_open_source": "OPEN SOURCE",
+    "hero_marker_reference": "REFERENCE-DRIVEN",
+    "sample_caption": "METRICHE DI ESEMPIO",
+    "sample_disclaimer": "Non dati reali — l'analizzatore li calcola dai tuoi file."
   },
   "analyzer": {
     "back_home": "← Home",

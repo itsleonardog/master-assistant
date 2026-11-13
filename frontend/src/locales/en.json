@@ -28,7 +28,12 @@
     "open_title": "Open source, for real",
     "open_body": "The code is open. You can read it, fork it, improve it. If you can code, send a pull request. If you can master, share your use cases. If you're still learning, report what's broken. Every contribution makes the tool better for everyone.",
     "github_cta": "View on GitHub ↗",
-    "footer": "Made for home producers · Open source · {{year}}"
+    "footer": "Made for home producers · Open source · {{year}}",
+    "hero_marker_edu": "EDU · NON-COMMERCIAL",
+    "hero_marker_open_source": "OPEN SOURCE",
+    "hero_marker_reference": "REFERENCE-DRIVEN",
+    "sample_caption": "SAMPLE METRICS",
+    "sample_disclaimer": "Not real data — the analyzer computes these from your files."
   },
   "analyzer": {
     "back_home": "← Home",

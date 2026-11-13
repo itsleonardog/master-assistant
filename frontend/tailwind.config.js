@@ -45,6 +45,30 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        /* Landing page reskin only: washi paper, sumi ink, vermilion seal.
+           Fixed hex values on purpose, so the analyzer keeps the Zinc tokens. */
+        washi: {
+          DEFAULT: "#fef9f2",
+          low: "#f8f3ec",
+          container: "#f2ede7",
+          high: "#ece7e1",
+        },
+        sumi: {
+          DEFAULT: "#1c1b19",
+          soft: "#494740",
+          outline: "#7a776f",
+          hairline: "#cbc6bd",
+        },
+        vermilion: {
+          DEFAULT: "#b72312",
+          bright: "#fe563f",
+          soft: "#ffdad4",
+        },
+      },
+      fontFamily: {
+        display: ['"Noto Serif"', "Georgia", "serif"],
+        body: ['"Plus Jakarta Sans"', "system-ui", "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",

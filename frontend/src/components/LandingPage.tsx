@@ -1,9 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-import { Alert } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
@@ -18,6 +15,23 @@ interface LandingPageProps {
 const STEP_KEYS = ["step1", "step2", "step3", "step4"] as const;
 
 /**
+ * Decorative hero markers. Deliberately non-quantitative: they describe the
+ * project, they are not audio specs. Translation keys under "landing.*".
+ */
+const HERO_MARKER_KEYS = [
+  "hero_marker_edu",
+  "hero_marker_open_source",
+  "hero_marker_reference",
+] as const;
+
+/** Sample rows of the instrument card. The analyzer computes the real ones. */
+const SAMPLE_METRICS = [
+  { label: "LUFS INT", value: "-14.1" },
+  { label: "TRUE PEAK", value: "-0.8" },
+  { label: "LRA", value: "9.2" },
+] as const;
+
+/**
  * Marketing landing page: explains the project mission and gates the analyzer
  * behind an explicit call to action. Owns no app state.
  */
@@ -30,84 +44,138 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="bg-muted/20">
-        <div className="mx-auto max-w-4xl px-6 py-12 md:py-20">
-          <div className="flex items-center justify-between gap-4">
-            <Badge variant="secondary">{t("landing.badge")}</Badge>
-            <LanguageSwitcher />
+    <main className="min-h-screen bg-washi text-sumi washi-grain font-body">
+      <header className="sticky top-0 z-50 border-b border-sumi-hairline/40 bg-washi/95 backdrop-blur">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6">
+          <span className="font-mono text-xs tracking-widest text-sumi">MASTER ASSISTANT</span>
+          <LanguageSwitcher />
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <span className="hanko-stamp inline-block px-2 py-0.5 font-mono text-[11px] font-medium tracking-widest">
+              {t("landing.badge")}
+            </span>
+            <h1 className="mt-6 font-display text-4xl font-light leading-[1.1] tracking-tight md:text-6xl">
+              {t("landing.headline")}
+            </h1>
+            <p className="mt-6 max-w-xl font-body text-lg text-sumi-soft">
+              {t("landing.subheadline")}
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button
+                size="lg"
+                onClick={onEnterApp}
+                className="bg-sumi text-washi shadow-none hover:bg-vermilion"
+              >
+                {t("landing.cta_primary")}
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={scrollToMission}
+                className="border-sumi-hairline bg-transparent text-sumi shadow-none hover:bg-washi-high hover:text-sumi"
+              >
+                {t("landing.cta_secondary")}
+              </Button>
+            </div>
+            <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 border-t border-sumi-hairline/40 pt-4">
+              {HERO_MARKER_KEYS.map((key) => (
+                <li key={key} className="font-mono text-xs text-sumi-outline">
+                  {t(`landing.${key}`)}
+                </li>
+              ))}
+            </ul>
           </div>
-          <h1 className="mt-4 max-w-3xl text-3xl font-bold tracking-tight md:text-5xl">
-            {t("landing.headline")}
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            {t("landing.subheadline")}
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" onClick={onEnterApp}>
-              {t("landing.cta_primary")}
-            </Button>
-            <Button size="lg" variant="outline" onClick={scrollToMission}>
-              {t("landing.cta_secondary")}
-            </Button>
+
+          <div className="lg:col-span-5">
+            <div className="rounded border border-sumi-hairline bg-washi-container p-4">
+              <span className="telemetry text-[10px] tracking-widest text-sumi-outline">
+                {t("landing.sample_caption")}
+              </span>
+              <dl className="mt-4 space-y-2">
+                {SAMPLE_METRICS.map((metric) => (
+                  <div
+                    key={metric.label}
+                    className="flex items-baseline justify-between gap-4 font-mono text-sm"
+                  >
+                    <dt className="text-sumi-soft">{metric.label}</dt>
+                    <dd className="text-sumi">{metric.value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-4 border-t border-sumi-hairline pt-3 font-mono text-[11px] leading-relaxed text-sumi-outline">
+                {t("landing.sample_disclaimer")}
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="mission" className="mx-auto max-w-4xl px-6 py-16">
-        <h2 className="text-2xl font-semibold tracking-tight">{t("landing.mission_title")}</h2>
-        <p className="mt-4 text-base text-muted-foreground">{t("landing.mission_body")}</p>
+      <section id="mission" className="mx-auto max-w-3xl px-6 py-16">
+        <h2 className="font-display text-3xl font-light md:text-4xl">
+          {t("landing.mission_title")}
+        </h2>
+        <p className="mt-4 font-body text-base text-sumi-soft">{t("landing.mission_body")}</p>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">{t("landing.audience_title")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{t("landing.audience_body")}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">{t("landing.how_title")}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">{t("landing.how_body")}</p>
-            </CardContent>
-          </Card>
+          <div className="rounded border border-sumi-hairline p-6">
+            <h3 className="font-display text-xl">{t("landing.audience_title")}</h3>
+            <p className="mt-2 font-body text-sm text-sumi-soft">{t("landing.audience_body")}</p>
+          </div>
+          <div className="rounded border border-sumi-hairline p-6">
+            <h3 className="font-display text-xl">{t("landing.how_title")}</h3>
+            <p className="mt-2 font-body text-sm text-sumi-soft">{t("landing.how_body")}</p>
+          </div>
         </div>
       </section>
 
       <section className="my-16 px-6">
-        <Alert className="mx-auto max-w-4xl border-l-4 border-primary bg-muted/30 p-6">
-          <h3 className="text-xl font-bold">{t("landing.no_auto_title")}</h3>
-          <p className="mt-2 text-base text-muted-foreground">{t("landing.no_auto_body")}</p>
-        </Alert>
+        <div className="hanko-stamp mx-auto max-w-3xl p-6">
+          <h3 className="font-display text-2xl">{t("landing.no_auto_title")}</h3>
+          <p className="mt-3 font-body text-base text-sumi-soft">{t("landing.no_auto_body")}</p>
+        </div>
       </section>
 
-      <section className="mx-auto max-w-4xl px-6 py-16">
-        <h2 className="text-2xl font-semibold tracking-tight">{t("landing.steps_title")}</h2>
+      <section className="mx-auto max-w-3xl px-6 py-16">
+        <h2 className="font-display text-3xl font-light md:text-4xl">
+          {t("landing.steps_title")}
+        </h2>
         <ol className="mt-8 space-y-6">
           {STEP_KEYS.map((key, index) => (
             <li key={key} className="flex items-start gap-4">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-sumi-hairline font-mono text-sm text-sumi-soft">
                 {index + 1}
               </span>
-              <p className="text-base text-muted-foreground">{t(`landing.${key}`)}</p>
+              <p className="font-body text-base text-sumi-soft">{t(`landing.${key}`)}</p>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="mx-auto max-w-4xl px-6 py-16">
-        <h2 className="text-2xl font-semibold tracking-tight">{t("landing.purpose_title")}</h2>
-        <p className="mt-4 text-base text-muted-foreground">{t("landing.purpose_body")}</p>
+      <section className="px-6 py-16">
+        <div className="mx-auto max-w-2xl">
+          <h2 className="font-display text-3xl font-light md:text-4xl">
+            {t("landing.purpose_title")}
+          </h2>
+          <p className="mt-4 font-body text-base leading-relaxed text-sumi-soft">
+            {t("landing.purpose_body")}
+          </p>
+        </div>
       </section>
 
-      <section className="bg-muted/20">
-        <div className="mx-auto max-w-4xl px-6 py-16">
-          <h2 className="text-2xl font-semibold tracking-tight">{t("landing.open_title")}</h2>
-          <p className="mt-4 text-base text-muted-foreground">{t("landing.open_body")}</p>
-          <Button variant="outline" asChild className="mt-6">
+      <section className="border-t border-sumi-hairline px-6 py-16">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="font-display text-3xl font-light md:text-4xl">
+            {t("landing.open_title")}
+          </h2>
+          <p className="mt-4 font-body text-base text-sumi-soft">{t("landing.open_body")}</p>
+          <Button
+            variant="outline"
+            asChild
+            className="mt-6 border-sumi bg-transparent text-sumi shadow-none hover:bg-sumi hover:text-washi"
+          >
             <a href={GITHUB_URL} target="_blank" rel="noreferrer">
               {t("landing.github_cta")}
             </a>
@@ -115,7 +183,7 @@ export function LandingPage({ onEnterApp }: LandingPageProps) {
         </div>
       </section>
 
-      <footer className="border-t py-8 text-center text-sm text-muted-foreground">
+      <footer className="border-t border-sumi-hairline px-6 py-8 text-center font-mono text-xs tracking-wide text-sumi-outline">
         {t("footer.text", { year: currentYear })}
       </footer>
     </main>
